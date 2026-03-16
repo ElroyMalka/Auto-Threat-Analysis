@@ -16,99 +16,49 @@
         
         input[type="text"], input[type="date"], select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e0e6ed; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s; font-family: inherit; }
         input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus { border-color: #3498db; outline: none; }
-        select:disabled { background-color: #ecf0f1; cursor: not-allowed; color: #7f8c8d; font-weight: bold; }
-        textarea { resize: vertical; }
         
         button { background-color: #3498db; color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: 0.2s; }
         button:hover { background-color: #2980b9; }
         .btn-secondary { background-color: #95a5a6; }
-        .btn-secondary:hover { background-color: #7f8c8d; }
         .btn-outline { background-color: transparent; color: #3498db; border: 2px solid #3498db; margin-bottom: 15px; }
-        .btn-outline:hover { background-color: #ebf5fb; }
         .btn-word { background-color: #2b579a; color: white; border: 1px solid #1e3f6f; margin-bottom: 10px; }
-        .btn-word:hover { background-color: #1e3f6f; }
         .btn-pdf { background-color: #e74c3c; color: white; border: 1px solid #c0392b; margin-bottom: 10px;}
-        .btn-pdf:hover { background-color: #c0392b; }
         .btn-save { background-color: #f39c12; color: white; margin-top: 10px; }
         
         .threats-scroll-area { max-height: 55vh; overflow-y: auto; padding-right: 10px; margin-bottom: 30px; }
         .category-title { font-size: 1.1em; color: #34495e; border-bottom: 2px solid #ecf0f1; padding-bottom: 8px; margin-top: 25px; margin-bottom: 15px; font-weight: bold; }
-        .category-title:first-child { margin-top: 0; }
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
         
         .threat-card { background: #fff; border: 2px solid #e0e6ed; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.2s ease; user-select: none; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .threat-card:hover { border-color: #bdc3c7; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .threat-card.selected { border-color: #2ecc71; background-color: #f0fdf4; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.15); }
-        .threat-card.selected::after { content: "✓"; position: absolute; top: 10px; left: 10px; color: #2ecc71; font-size: 20px; font-weight: bold; }
+        .threat-card.selected { border-color: #2ecc71; background-color: #f0fdf4; }
+        .threat-card.selected::after { content: "✓"; position: absolute; top: 10px; left: 10px; color: #2ecc71; font-weight: bold; }
         
-        .card-icon { font-size: 28px; margin-bottom: 8px; display: block; }
-        .card-text { font-size: 14px; color: #34495e; font-weight: 600; line-height: 1.3; }
-        .threat-id-label { font-family: monospace; background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-bottom: 5px; display: inline-block; color: #333; }
+        .card-icon { font-size: 28px; margin-bottom: 8px; }
+        .card-text { font-size: 14px; color: #34495e; font-weight: 600; }
 
         /* =========================================
-           2. עיצוב המודל והאשף (Wizard)
+           2. עיצוב המודלים (Wizards)
         ========================================= */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; width: 750px; max-width: 95%; height: 85vh; border-radius: 12px; padding: 0; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.3); overflow: hidden; }
-        
-        .wizard-header { background: #f8f9fa; padding: 20px 30px; border-bottom: 1px solid #e0e6ed; }
-        .wizard-title { margin: 0 0 15px 0; color: #1a73e8; font-size: 1.2em; font-weight: bold; }
-        .wizard-steps-indicator { display: flex; justify-content: space-between; position: relative; }
-        .wizard-steps-indicator::before { content: ''; position: absolute; top: 12px; left: 30px; right: 30px; height: 3px; background: #e0e6ed; z-index: 1; }
-        .step-dot { position: relative; z-index: 2; background: white; border: 3px solid #e0e6ed; color: #7f8c8d; width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 14px; }
-        .step-label { position: absolute; top: 35px; white-space: nowrap; font-size: 12px; color: #7f8c8d; font-weight: bold; transform: translateX(50%); right: 50%; }
-        .step-dot.active { border-color: #3498db; background: #3498db; color: white; }
-        .step-dot.active .step-label { color: #3498db; }
-        .step-dot.completed { border-color: #2ecc71; background: #2ecc71; color: white; }
-
+        .modal-content { background: white; width: 750px; max-width: 95%; height: 85vh; border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.3); overflow: hidden; }
         .modal-body { padding: 30px; overflow-y: auto; flex-grow: 1; }
-        .wizard-step-content { display: none; animation: fadeIn 0.3s; }
-        .wizard-step-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .wizard-footer { padding: 15px 30px; border-top: 1px solid #e0e6ed; background: #fff; display: flex; justify-content: space-between; gap: 15px; }
-        .wizard-footer button { width: auto; min-width: 120px; }
-
-        .risk-section { background: #fff; border: 2px solid #e0e6ed; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .risk-title { font-weight: bold; color: #2c3e50; font-size: 1.1em; margin-bottom: 15px; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px; }
-        .risk-controls { display: flex; gap: 20px; align-items: flex-end; }
-        .risk-control-group { flex: 1; }
-        .risk-control-group label { font-size: 14px; color: #34495e; font-weight: bold; display: block; margin-bottom: 5px; }
-        .risk-result { flex: 1; text-align: center; background: #f8f9fa; border-radius: 8px; padding: 15px; border: 1px solid #e0e6ed; }
-        .risk-result span { font-size: 13px; color: #7f8c8d; display: block; margin-bottom: 5px; font-weight: bold; }
         
-        .badge-risk { display: inline-block; padding: 8px 20px; border-radius: 20px; font-weight: bold; color: white; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .badge-risk { display: inline-block; padding: 8px 20px; border-radius: 20px; font-weight: bold; color: white; }
         .bg-very-low { background-color: #92d050; color: #000; } 
         .bg-low { background-color: #00b050; } 
         .bg-medium { background-color: #ffff00; color: #000; } 
         .bg-high { background-color: #ff0000; } 
         .bg-critical { background-color: #c00000; } 
-        .bg-none { background-color: #bdc3c7; color: #333; box-shadow: none; } 
+        .bg-none { background-color: #bdc3c7; color: #333; } 
 
-        .req-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .req-item { display: flex; align-items: flex-start; gap: 12px; background: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e9ecef; cursor: pointer; transition: background 0.2s; margin-bottom: 10px; }
-        .req-item:hover { background: #eef2f5; }
-        .req-item input { margin-top: 4px; transform: scale(1.2); flex-shrink: 0; }
-        .req-id-badge { background-color: #2c3e50; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: monospace; font-weight: bold; flex-shrink: 0; margin-top: 2px; }
-        .req-text-content { flex-grow: 1; white-space: pre-line; line-height: 1.5; font-size: 14px; color: #333; }
+        .req-item { display: flex; align-items: flex-start; gap: 12px; background: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e9ecef; cursor: pointer; margin-bottom: 8px; }
+        .req-id-badge { background-color: #2c3e50; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: monospace; }
         
-        .category-group { border: 1px solid #d1d8e0; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
-        .category-header { background: #f1f2f6; padding: 12px 15px; cursor: pointer; font-weight: bold; color: #2f3640; display: flex; justify-content: space-between; align-items: center; user-select: none; }
-        .category-content { padding: 15px; background: white; display: none; border-top: 1px solid #d1d8e0; }
-        .category-content.open { display: block; }
-        
-        .custom-req-area { display: flex; gap: 10px; margin-top: 15px; background: #eafaf1; padding: 15px; border-radius: 8px; border: 1px solid #c3e6cb; }
-
-        /* =========================================
-           3. עיצוב המסמך להדפסה (PDF)
-        ========================================= */
         @media print {
             body * { visibility: hidden; } 
             #printArea, #printArea * { visibility: visible; } 
-            #printArea { position: absolute; left: 0; top: 0; width: 100%; direction: rtl; padding: 0; margin: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; color: #000; background: white; }
-            @page { size: A4; margin: 15mm; } 
+            #printArea { position: absolute; left: 0; top: 0; width: 100%; direction: rtl; }
         }
-        
     </style>
 </head>
 <body>
@@ -118,76 +68,37 @@
 
     <div id="step1" class="container">
         <h1>🛡️ AutoThreatAnalysis</h1>
-        <label style="display:block; margin-bottom:10px; color:#34495e; font-weight:bold;">תן שם לפרויקט:</label>
-        <input type="text" id="projectNameInput" placeholder="לדוגמה: פרויקט שדרוג תשתיות 2026...">
+        <label style="display:block; margin-bottom:10px; font-weight:bold;">תן שם לפרויקט:</label>
+        <input type="text" id="projectNameInput" placeholder="שם הפרויקט שלך...">
         <button onclick="goToStep2()">🚀 התחל לאפיין</button>
-        
-        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; border-top: 1px solid #eee; padding-top: 20px;">
-            <button onclick="document.getElementById('importFile').click()" class="btn-outline" style="width: auto; margin:0;">📂 טען פרויקט קודם</button>
-        </div>
+        <button onclick="document.getElementById('importFile').click()" class="btn-outline" style="margin-top:10px;">📂 טען פרויקט שמור</button>
     </div>
 
     <div id="step2" class="container hidden">
         <h2>בחירת איומים מתוך הקטלוג</h2>
         <div id="displayProjectName" class="project-title"></div>
-        <p style="text-align:center; color:#7f8c8d; margin-bottom:15px;">לחץ על איום כדי לנתח ולהתאים לו דרישות:</p>
-        
         <div id="threatsContainer" class="threats-scroll-area"></div>
-
         <div style="display:flex; gap:15px; margin-top: 20px;">
-            <button onclick="goToStep1()" class="btn-secondary">חזור אחורה</button>
-            <button onclick="openReportModal()" style="background-color: #2ecc71;">📄 הפקת דוחות רשמיים</button>
-        </div>
-        
-        <div style="display:flex; gap:15px; margin-top: 10px;">
-            <button onclick="exportProject()" class="btn-save">💾 גיבוי עבודה לקובץ</button>
+            <button onclick="goToStep1()" class="btn-secondary">חזור</button>
+            <button onclick="openReportModal()" style="background-color: #2ecc71;">📄 הפקת דוחות</button>
+            <button onclick="exportProject()" class="btn-save">💾 שמור גיבוי</button>
         </div>
     </div>
 
     <div id="reportSettingsModal" class="modal-overlay hidden">
-        <div class="modal-content" style="width: 650px; height: auto;">
-            <div class="wizard-header" style="border-radius: 12px 12px 0 0;">
-                <h3 style="margin:0; color:#1a73e8;">הגדרות הפקת מסמך (תבנית ממשלתית)</h3>
-            </div>
-            <div class="modal-body" style="padding: 25px;">
-                
-                <div style="display:flex; gap:15px; margin-bottom:15px;">
-                    <div style="flex:1;">
-                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">סימוכין (יופיע למעלה ולמטה):</label>
-                        <input type="text" id="reportReference" placeholder="לדוגמה: ד/ס 061">
-                    </div>
-                    <div style="flex:1;">
-                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">סיווג המסמך:</label>
-                        <select id="reportClassification">
-                            <option value="בלמ&quot;ס">בלמ"ס</option>
-                            <option value="שמור">שמור</option>
-                            <option value="סודי" selected>סודי</option>
-                            <option value="סודי ביותר">סודי ביותר</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div style="display:flex; gap:15px;">
-                    <div style="flex:1;">
-                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">שם חותם ראשי (בסוף המסמך):</label>
-                        <input type="text" id="reportAuthor" placeholder="לדוגמה: יהודה אלי">
-                        <input type="text" id="reportAuthorTitle" value="יועץ הגנה בסייבר" style="margin-top:5px;">
-                    </div>
-                </div>
-
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e0e6ed;">
-                    <input type="checkbox" id="showReqIds" checked style="transform: scale(1.3); margin: 0;">
-                    <strong>הצג קוד מזהה (REQ-ID) בטבלאות המסמך</strong>
-                </label>
-                
-                <h4 style="margin-bottom: 10px; color:#2c3e50; border-top: 1px solid #eee; padding-top: 15px;">בחר אילו מסמכים להפיק:</h4>
-                <div style="display:flex; flex-direction: column; gap:0px;">
-                    <button onclick="executeDocumentGeneration('word', 'full')" class="btn-word">📝 Word - דוח אפיון מלא (3 פרקים)</button>
-                    <button onclick="executeDocumentGeneration('pdf', 'full')" class="btn-pdf">📄 PDF - דוח אפיון מלא (3 פרקים)</button>
-                    <button onclick="executeDocumentGeneration('pdf', 'consolidated')" class="btn-pdf" style="background-color: #8e44ad; border-color: #732d91;">📄 PDF - טבלת דרישות בלבד (פרק 2)</button>
-                </div>
-            </div>
-            <div class="wizard-footer" style="justify-content: flex-end;">
+        <div class="modal-content" style="height: auto; width: 500px;">
+            <div class="modal-body">
+                <h3>הגדרות הפקת מסמך</h3>
+                <label>שם חותם:</label>
+                <input type="text" id="reportAuthor" placeholder="שם מלא">
+                <label>סיווג:</label>
+                <select id="reportClassification">
+                    <option value="בלמ&quot;ס">בלמ"ס</option>
+                    <option value="שמור">שמור</option>
+                    <option value="סודי" selected>סודי</option>
+                </select>
+                <button onclick="executeDocumentGeneration('word', 'full')" class="btn-word">📝 הורד קובץ Word</button>
+                <button onclick="executeDocumentGeneration('pdf', 'full')" class="btn-pdf">📄 הדפס PDF</button>
                 <button onclick="closeReportModal()" class="btn-secondary">סגור</button>
             </div>
         </div>
@@ -195,428 +106,148 @@
 
     <div id="threatWizardModal" class="modal-overlay hidden">
         <div class="modal-content">
-            <div class="wizard-header">
-                <div class="wizard-title" id="wizardThreatTitle">טיפול באיום</div>
-                <div class="wizard-steps-indicator">
-                    <div class="step-dot active" id="dot1">1<span class="step-label">סיכון בסיסי</span></div>
-                    <div class="step-dot" id="dot2">2<span class="step-label">דרישות הגנה</span></div>
-                    <div class="step-dot" id="dot3">3<span class="step-label">סיכון שיורי</span></div>
-                </div>
-            </div>
-
             <div class="modal-body">
-                
-                <div id="wizardStep1" class="wizard-step-content active">
-                    <div class="risk-section">
-                        <div class="risk-title">🔴 שלב 1: הערכת סיכון בסיסי (לפני הגנה)</div>
-                        <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 20px;">הערך את הסיכון שמהווה האיום כרגע, בהנחה שאין שום מנגנוני אבטחה קיימים במערכת.</p>
-                        <div class="risk-controls">
-                            <div class="risk-control-group">
-                                <label>סבירות למימוש (Likelihood)</label>
-                                <select id="inherentLikelihood" onchange="updateWizardRisk()">
-                                    <option value="">בחר...</option>
-                                    <option value="נמוכה">נמוכה</option>
-                                    <option value="בינונית">בינונית</option>
-                                    <option value="גבוהה">גבוהה</option>
-                                </select>
-                            </div>
-                            <div class="risk-control-group">
-                                <label>חומרת ההשפעה (Impact)</label>
-                                <select id="inherentImpact" onchange="updateWizardRisk()">
-                                    <option value="">בחר...</option>
-                                    <option value="נמוכה">נמוכה</option>
-                                    <option value="בינונית">בינונית</option>
-                                    <option value="גבוהה">גבוהה</option>
-                                </select>
-                            </div>
-                            <div class="risk-result">
-                                <span>סיכון מחושב:</span>
-                                <div id="inherentBadge" class="badge-risk bg-none">טרם נקבע</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="wizardStep2" class="wizard-step-content">
-                    <h3 style="margin-top:0; color:#2c3e50;">🛡️ שלב 2: בחירת מענה - דרישות אבטחת מידע</h3>
-                    <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 15px;">סמן את הדרישות הנדרשות על מנת להוריד את הסבירות למימוש האיום.</p>
-                    
+                <h3 id="wizardThreatTitle">טיפול באיום</h3>
+                <div id="wizardStep1">
+                    <h4>שלב 1: הערכת סיכון</h4>
+                    <select id="inherentLikelihood" onchange="updateWizardRisk()">
+                        <option value="">סבירות...</option>
+                        <option value="נמוכה">נמוכה</option>
+                        <option value="בינונית">בינונית</option>
+                        <option value="גבוהה">גבוהה</option>
+                    </select>
+                    <select id="inherentImpact" onchange="updateWizardRisk()">
+                        <option value="">השפעה...</option>
+                        <option value="נמוכה">נמוכה</option>
+                        <option value="בינונית">בינונית</option>
+                        <option value="גבוהה">גבוהה</option>
+                    </select>
+                    <div id="inherentBadge" class="badge-risk bg-none">טרם נקבע</div>
+                    <hr>
+                    <h4>שלב 2: בחירת דרישות הגנה</h4>
                     <div id="allReqsContainer"></div>
-                    
-                    <div class="custom-req-area">
-                        <input type="text" id="customReqInput" placeholder="הקלד דרישה ייעודית שחסרה בקטלוג...">
-                        <button onclick="addCustomReq()" style="background-color:#27ae60;">+ הוסף</button>
-                    </div>
                 </div>
-
-                <div id="wizardStep3" class="wizard-step-content">
-                    <div class="risk-section">
-                        <div class="risk-title">🟢 שלב 3: הערכת סיכון שיורי (לאחר הגנה)</div>
-                        <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 20px;">
-                            <strong>הערה מקצועית:</strong> יישום בקרות הגנה מקטין בדרך כלל את ה<b>סבירות</b> לתקיפה. רמת ה<b>השפעה (Impact)</b> נשארת לרוב זהה לסיכון המקורי.
-                        </p>
-                        <div class="risk-controls">
-                            <div class="risk-control-group">
-                                <label>סבירות (לאחר מימוש הדרישות)</label>
-                                <select id="residualLikelihood" onchange="updateWizardRisk()">
-                                    <option value="">בחר...</option>
-                                    <option value="נמוכה">נמוכה</option>
-                                    <option value="בינונית">בינונית</option>
-                                    <option value="גבוהה">גבוהה</option>
-                                </select>
-                            </div>
-                            <div class="risk-control-group">
-                                <label>השפעה (נעול)</label>
-                                <select id="residualImpact" disabled>
-                                    <option value="">בחר...</option>
-                                    <option value="נמוכה">נמוכה</option>
-                                    <option value="בינונית">בינונית</option>
-                                    <option value="גבוהה">גבוהה</option>
-                                </select>
-                            </div>
-                            <div class="risk-result">
-                                <span>סיכון מחושב חדש:</span>
-                                <div id="residualBadge" class="badge-risk bg-none">טרם נקבע</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            
-            <div class="wizard-footer">
-                <button id="wizBtnPrev" onclick="navigateWizard(-1)" class="btn-secondary" style="visibility: hidden;">חזור</button>
-                <div style="display:flex; gap:10px;">
-                    <button id="wizBtnCancel" onclick="closeWizard()" class="btn-outline">ביטול וסגירה</button>
-                    <button id="wizBtnNext" onclick="navigateWizard(1)" style="background-color: #3498db;">המשך לשלב הבא ←</button>
-                    <button id="wizBtnSave" onclick="saveThreatWizard()" style="background-color: #27ae60; display: none;">💾 שמור וסיים</button>
+                <div style="margin-top:20px;">
+                    <button onclick="saveThreatWizard()" style="background-color: #27ae60;">💾 שמור וסיים</button>
+                    <button onclick="closeWizard()" class="btn-outline">ביטול</button>
                 </div>
             </div>
         </div>
     </div>
 
 <script>
-    // =====================================================================
-    // 👇👇👇 סקטור 1: קטלוג הדרישות המלא 👇👇👇
-    // =====================================================================
     const categorizedRequirements = {
-        "1. בקרת גישה והזדהות": [
-            { id: "R1", text: "הטמעת הזדהות רב-שלבית (MFA) לכלל המשתמשים מחוץ לרשת." },
-            { id: "R2", text: "הגבלת הרשאות גישה (Least Privilege) למערכות הליבה." }
+        "בקרת גישה": [
+            { id: "R1", text: "הטמעת הזדהות רב-שלבית (MFA)." },
+            { id: "R2", text: "הגבלת הרשאות גישה (Least Privilege)." }
         ],
-        "2. הגנת נתונים": [
-            { id: "R3", text: "הצפנת נתונים במנוחה (Data at Rest) באלגוריתם AES-256." },
-            { id: "R4", text: "ביצוע גיבויים מנותקים תקופתיים ושמירתם בכספת." }
-        ],
-        "3. תקשורת ורשת": [
-            { id: "R5", text: "הצפנת נתונים בתעבורה בשימוש בפרוטוקול TLS 1.2 ומעלה." },
-            { id: "R6", text: `כלל הפורטים החיצוניים יהיו סגורים למעט:
-8080
-2029` }
+        "הגנת נתונים": [
+            { id: "R3", text: "הצפנת נתונים במנוחה (AES-256)." },
+            { id: "R4", text: "ביצוע גיבויים תקופתיים." }
         ]
     };
 
-    // =====================================================================
-    // 👇👇👇 סקטור 2: מיפוי איומים לדרישות מומלצות 👇👇👇
-    // =====================================================================
-    const threatToReqMapping = {
-        "חדירה למערכת מרחוק עקב פרצות": ["R1", "R5"],
-        "דלף מידע מתחנת עבודה": ["R2", "R3", "R6"],
-        "מתקפת כופרה (Ransomware)": ["R1", "R2", "R4"]
-    };
-
-    // =====================================================================
-    // 👇👇👇 סקטור 3: קטלוג האיומים 👇👇👇
-    // =====================================================================
     const categorizedThreats = {
-        "איומי רשת וחדירה": [
-            { name: "חדירה למערכת מרחוק עקב פרצות", icon: "🌐" },
-            { name: "מתקפת מניעת שירות (DDoS)", icon: "🛑" }
-        ],
-        "איומי מידע ומשתמשים": [
-            { name: "דלף מידע מתחנת עבודה", icon: "🔓" },
-            { name: "מתקפת כופרה (Ransomware)", icon: "💀" }
+        "איומי סייבר": [
+            { name: "חדירה מרחוק", icon: "🌐" },
+            { name: "מתקפת כופרה", icon: "💀" },
+            { name: "דלף מידע", icon: "🔓" }
         ]
     };
-
-    // =====================================================================
-    // ⚙️ מנוע המערכת
-    // =====================================================================
-
-    function escapeHTML(str) {
-        if (!str) return "";
-        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
 
     const reqDB = {}; 
-    const allReqIds = []; 
-    const threatIdMap = {}; 
-    let customReqCounter = 1; 
-    
-    for (const [category, reqs] of Object.entries(categorizedRequirements)) {
-        reqs.forEach(req => {
-            reqDB[req.id] = { category: category, text: req.text };
-            allReqIds.push(req.id);
-        });
-    }
-
-    let threatCounter = 1;
-    for (const [category, threats] of Object.entries(categorizedThreats)) {
-        threats.forEach(t => {
-            threatIdMap[t.name] = `S${threatCounter}`;
-            threatCounter++;
-        });
+    for (const [cat, reqs] of Object.entries(categorizedRequirements)) {
+        reqs.forEach(r => reqDB[r.id] = { category: cat, text: r.text });
     }
 
     let projectData = {}; 
     let currentEditingThreat = "";
-    let currentWizardStep = 1;
 
-    function calculateSeverity(likelihood, impact) {
-        if (!likelihood || !impact) return { text: "טרם נקבע", class: "bg-none", inline: "" };
-        
+    function calculateSeverity(l, i) {
+        if (!l || !i) return { text: "טרם נקבע", class: "bg-none", inline: "" };
         const matrix = {
             "נמוכה": { "נמוכה": "נמוכה ביותר", "בינונית": "נמוכה", "גבוהה": "בינונית" },
             "בינונית": { "נמוכה": "נמוכה", "בינונית": "בינונית", "גבוהה": "גבוהה" },
             "גבוהה": { "נמוכה": "בינונית", "בינונית": "גבוהה", "גבוהה": "קריטית" }
         };
-
-        const result = matrix[likelihood][impact];
-        let colorClass = "bg-none";
-        let inlineStyle = "";
-        
-        if (result === "נמוכה ביותר") { colorClass = "bg-very-low"; inlineStyle = "background-color:#92d050; color:#000;"; }
-        else if (result === "נמוכה") { colorClass = "bg-low"; inlineStyle = "background-color:#00b050; color:#fff;"; }
-        else if (result === "בינונית") { colorClass = "bg-medium"; inlineStyle = "background-color:#ffff00; color:#000;"; }
-        else if (result === "גבוהה") { colorClass = "bg-high"; inlineStyle = "background-color:#ff0000; color:#fff;"; }
-        else if (result === "קריטית") { colorClass = "bg-critical"; inlineStyle = "background-color:#c00000; color:#fff;"; }
-
-        return { text: result, class: colorClass, inline: inlineStyle };
+        const res = matrix[l][i];
+        let cls = "bg-none", style = "";
+        if (res === "נמוכה ביותר") { cls = "bg-very-low"; style = "background-color:#92d050;"; }
+        else if (res === "נמוכה") { cls = "bg-low"; style = "background-color:#00b050;"; }
+        else if (res === "בינונית") { cls = "bg-medium"; style = "background-color:#ffff00; color:#000;"; }
+        else if (res === "גבוהה") { cls = "bg-high"; style = "background-color:#ff0000;"; }
+        else if (res === "קריטית") { cls = "bg-critical"; style = "background-color:#c00000;"; }
+        return { text: res, class: cls, inline: style };
     }
 
     function updateWizardRisk() {
-        const inL = document.getElementById('inherentLikelihood').value;
-        const inI = document.getElementById('inherentImpact').value;
-        const inRes = calculateSeverity(inL, inI);
-        
-        const inBadge = document.getElementById('inherentBadge');
-        inBadge.innerText = inRes.text;
-        inBadge.className = `badge-risk ${inRes.class}`;
-
-        const resImpactSelect = document.getElementById('residualImpact');
-        resImpactSelect.value = inI; 
-
-        const resL = document.getElementById('residualLikelihood').value;
-        const resI = resImpactSelect.value;
-        const resRes = calculateSeverity(resL, resI);
-        
-        const resBadge = document.getElementById('residualBadge');
-        resBadge.innerText = resRes.text;
-        resBadge.className = `badge-risk ${resRes.class}`;
+        const l = document.getElementById('inherentLikelihood').value;
+        const i = document.getElementById('inherentImpact').value;
+        const res = calculateSeverity(l, i);
+        const b = document.getElementById('inherentBadge');
+        b.innerText = res.text;
+        b.className = `badge-risk ${res.class}`;
     }
 
-    function generateReqHTML(id, isChecked) {
-        let reqData = reqDB[id];
-        let checkedStr = isChecked ? "checked" : "";
-        let safeId = escapeHTML(id);
-        return `
-            <label class="req-item">
-                <input type="checkbox" value="${safeId}" class="req-checkbox" ${checkedStr}>
-                <span class="req-id-badge">${safeId}</span>
-                <span class="req-text-content">${escapeHTML(reqData.text)}</span>
-            </label>
-        `;
-    }
-
-    function openModal(threatName) {
-        currentEditingThreat = threatName;
-        document.getElementById('wizardThreatTitle').innerText = `אפיון איום [${threatIdMap[threatName]}]: ${threatName}`;
-        
-        const currentData = projectData[threatName] || { reqs: [], inherent: {}, residual: {} };
-        const recommendedListIds = threatToReqMapping[threatName] || [];
-        const alreadySelectedIds = currentData.reqs;
-
-        document.getElementById('inherentLikelihood').value = currentData.inherent.likelihood || "";
-        document.getElementById('inherentImpact').value = currentData.inherent.impact || "";
-        document.getElementById('residualLikelihood').value = currentData.residual.likelihood || "";
+    function openModal(t) {
+        currentEditingThreat = t;
+        document.getElementById('wizardThreatTitle').innerText = t;
+        const data = projectData[t] || { reqs: [], inherent: {} };
+        document.getElementById('inherentLikelihood').value = data.inherent.likelihood || "";
+        document.getElementById('inherentImpact').value = data.inherent.impact || "";
         updateWizardRisk();
 
         const container = document.getElementById('allReqsContainer');
         container.innerHTML = '';
-        document.getElementById('customReqInput').value = '';
-
-        let recommendedHtml = '';
-        allReqIds.forEach(id => {
-            if (recommendedListIds.includes(id)) {
-                let isChecked = alreadySelectedIds.includes(id) || (!projectData[threatName] && currentData.reqs.length === 0);
-                recommendedHtml += generateReqHTML(id, isChecked);
-            }
-        });
-
-        alreadySelectedIds.forEach(id => {
-            if (id.startsWith('C') && reqDB[id]) {
-                recommendedHtml += generateReqHTML(id, true);
-            }
-        });
-
-        let catHtml = `
-        <div class="category-group" style="border-color: #2ecc71;">
-            <div class="category-header" style="background:#eafaf1; color:#27ae60;" onclick="this.parentElement.querySelector('.category-content').classList.toggle('open')">
-                <span>📁 דרישות מומלצות לאיום זה</span>
-            </div>
-            <div class="category-content open" id="recommendedFolderBox">
-                ${recommendedHtml || '<p style="color:gray; font-size:14px; margin:0;">אין דרישות מוגדרות מראש.</p>'}
-            </div>
-        </div>`;
-        container.innerHTML += catHtml;
-
-        for (const [category, reqs] of Object.entries(categorizedRequirements)) {
-            let nonRecommendedReqs = reqs.filter(req => !recommendedListIds.includes(req.id));
-            if (nonRecommendedReqs.length > 0) {
-                let catFolder = `<div class="category-group"><div class="category-header" onclick="this.parentElement.querySelector('.category-content').classList.toggle('open')"><span>📁 ${category}</span></div><div class="category-content">`;
-                nonRecommendedReqs.forEach(req => {
-                    let isChecked = alreadySelectedIds.includes(req.id);
-                    catFolder += generateReqHTML(req.id, isChecked);
-                });
-                catFolder += `</div></div>`;
-                container.innerHTML += catFolder;
-            }
+        for (const [cat, reqs] of Object.entries(categorizedRequirements)) {
+            let html = `<strong>${cat}</strong><br>`;
+            reqs.forEach(r => {
+                let checked = data.reqs.includes(r.id) ? "checked" : "";
+                html += `<label class="req-item"><input type="checkbox" value="${r.id}" class="req-cb" ${checked}> ${r.id}: ${r.text}</label>`;
+            });
+            container.innerHTML += html;
         }
-
-        currentWizardStep = 1;
-        updateWizardUI();
         document.getElementById('threatWizardModal').classList.remove('hidden');
     }
 
-    function updateWizardUI() {
-        document.getElementById('wizardStep1').classList.remove('active');
-        document.getElementById('wizardStep2').classList.remove('active');
-        document.getElementById('wizardStep3').classList.remove('active');
-        document.getElementById(`wizardStep${currentWizardStep}`).classList.add('active');
-
-        for(let i=1; i<=3; i++) {
-            let dot = document.getElementById(`dot${i}`);
-            dot.classList.remove('active', 'completed');
-            if (i < currentWizardStep) dot.classList.add('completed');
-            if (i === currentWizardStep) dot.classList.add('active');
-        }
-
-        const btnPrev = document.getElementById('wizBtnPrev');
-        const btnNext = document.getElementById('wizBtnNext');
-        const btnSave = document.getElementById('wizBtnSave');
-
-        btnPrev.style.visibility = currentWizardStep === 1 ? 'hidden' : 'visible';
-        
-        if (currentWizardStep === 3) {
-            btnNext.style.display = 'none';
-            btnSave.style.display = 'block';
-        } else {
-            btnNext.style.display = 'block';
-            btnSave.style.display = 'none';
-        }
-    }
-
-    function navigateWizard(direction) {
-        if (currentWizardStep === 1 && direction === 1) {
-            const inL = document.getElementById('inherentLikelihood').value;
-            const inI = document.getElementById('inherentImpact').value;
-            if (!inL || !inI) {
-                alert("אנא בחר סבירות והשפעה לסיכון הבסיסי לפני שממשיכים.");
-                return;
-            }
-            updateWizardRisk();
-        }
-        
-        currentWizardStep += direction;
-        if (currentWizardStep < 1) currentWizardStep = 1;
-        if (currentWizardStep > 3) currentWizardStep = 3;
-        updateWizardUI();
-    }
-
-    function closeWizard() { 
-        document.getElementById('threatWizardModal').classList.add('hidden'); 
-    }
-
-    function addCustomReq() {
-        const input = document.getElementById('customReqInput');
-        const val = input.value.trim();
-        if (!val) return;
-        
-        const customId = "C" + customReqCounter;
-        customReqCounter++;
-        
-        reqDB[customId] = { category: "דרישה ייעודית", text: val };
-        
-        const recFolder = document.getElementById('recommendedFolderBox');
-        if (recFolder) {
-            if (recFolder.innerHTML.includes('אין דרישות מוגדרות מראש')) recFolder.innerHTML = '';
-            recFolder.innerHTML += generateReqHTML(customId, true);
-        }
-        input.value = ''; 
-    }
-
     function saveThreatWizard() {
-        const checkboxes = document.querySelectorAll('.req-checkbox:checked');
-        const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+        const cbs = document.querySelectorAll('.req-cb:checked');
+        const ids = Array.from(cbs).map(c => c.value);
+        const l = document.getElementById('inherentLikelihood').value;
+        const i = document.getElementById('inherentImpact').value;
         
-        const inL = document.getElementById('inherentLikelihood').value;
-        const inI = document.getElementById('inherentImpact').value;
-        const resL = document.getElementById('residualLikelihood').value;
-        const resI = document.getElementById('residualImpact').value;
-
-        if (!resL) {
-            alert("חובה להעריך את הסבירות השיורית לפני שמירת האפיון.");
-            return;
-        }
-
         projectData[currentEditingThreat] = {
-            reqs: selectedIds,
-            inherent: { likelihood: inL, impact: inI, severity: calculateSeverity(inL, inI).text, inline: calculateSeverity(inL, inI).inline },
-            residual: { likelihood: resL, impact: resI, severity: calculateSeverity(resL, resI).text, inline: calculateSeverity(resL, resI).inline }
+            reqs: ids,
+            inherent: { likelihood: l, impact: i, severity: calculateSeverity(l, i).text, inline: calculateSeverity(l, i).inline }
         };
-        
-        const cardId = 'card-' + currentEditingThreat.replace(/\s+/g, '-');
-        const card = document.getElementById(cardId);
-        
-        if (selectedIds.length > 0) card.classList.add('selected');
-        else card.classList.remove('selected');
-        
+        loadThreats();
         closeWizard();
     }
 
+    function closeWizard() { document.getElementById('threatWizardModal').classList.add('hidden'); }
+    function openReportModal() { document.getElementById('reportSettingsModal').classList.remove('hidden'); }
+    function closeReportModal() { document.getElementById('reportSettingsModal').classList.add('hidden'); }
+
     function loadThreats() {
         const container = document.getElementById('threatsContainer');
-        container.innerHTML = ''; 
-        for (const [categoryName, threats] of Object.entries(categorizedThreats)) {
-            let catTitle = document.createElement('div');
-            catTitle.className = 'category-title';
-            catTitle.innerText = categoryName;
-            container.appendChild(catTitle);
-
-            let grid = document.createElement('div');
-            grid.className = 'cards-grid';
-
-            threats.forEach(threat => {
-                let card = document.createElement('div');
-                card.className = 'threat-card';
-                card.id = 'card-' + threat.name.replace(/\s+/g, '-');
-                
-                if (projectData[threat.name] && projectData[threat.name].reqs.length > 0) {
-                    card.classList.add('selected');
-                }
-
-                card.onclick = () => openModal(threat.name);
-                card.innerHTML = `<span class="card-icon">${threat.icon}</span><span class="threat-id-label">${threatIdMap[threat.name]}</span><span class="card-text">${threat.name}</span>`;
-                grid.appendChild(card);
+        container.innerHTML = '';
+        for (const [cat, threats] of Object.entries(categorizedThreats)) {
+            container.innerHTML += `<div class="category-title">${cat}</div>`;
+            let grid = `<div class="cards-grid">`;
+            threats.forEach(t => {
+                let sel = projectData[t.name] && projectData[t.name].reqs.length > 0 ? "selected" : "";
+                grid += `<div class="threat-card ${sel}" onclick="openModal('${t.name}')">
+                    <span class="card-icon">${t.icon}</span>
+                    <span class="card-text">${t.name}</span>
+                </div>`;
             });
-            container.appendChild(grid);
+            container.innerHTML += grid + `</div>`;
         }
     }
 
     function goToStep2() {
-        const projectName = document.getElementById('projectNameInput').value.trim();
-        if (!projectName) { alert("נא להזין שם פרויקט."); return; }
-        document.getElementById('displayProjectName').innerText = `פרויקט: ${projectName}`;
+        if (!document.getElementById('projectNameInput').value) return alert("הכנס שם פרויקט");
+        document.getElementById('displayProjectName').innerText = document.getElementById('projectNameInput').value;
         loadThreats();
         document.getElementById('step1').classList.add('hidden');
         document.getElementById('step2').classList.remove('hidden');
@@ -627,388 +258,49 @@
         document.getElementById('step1').classList.remove('hidden');
     }
 
-    // =====================================================================
-    // 💾 שמירה וטעינה
-    // =====================================================================
-    function exportProject() {
-        const projectName = document.getElementById('projectNameInput').value || "ללא_שם";
-        const customReqsToSave = {};
-        Object.keys(reqDB).forEach(id => {
-            if (id.startsWith('C')) customReqsToSave[id] = reqDB[id];
+    function executeDocumentGeneration(type, mode) {
+        const name = document.getElementById('projectNameInput').value;
+        const author = document.getElementById('reportAuthor').value;
+        const classification = document.getElementById('reportClassification').value;
+
+        let content = `<h1>אפיון סייבר - ${name}</h1><p>מחבר: ${author}</p><p>סיווג: ${classification}</p><hr>`;
+        Object.keys(projectData).forEach(t => {
+            const d = projectData[t];
+            content += `<h3>איום: ${t}</h3><p>חומרה: ${d.inherent.severity}</p><ul>`;
+            d.reqs.forEach(rid => content += `<li>${reqDB[rid].text}</li>`);
+            content += `</ul>`;
         });
 
-        const dataToSave = {
-            projectName: projectName,
-            data: projectData,
-            customReqs: customReqsToSave
-        };
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToSave));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", `אפיון_סייבר_${projectName}_גיבוי.json`);
-        document.body.appendChild(downloadAnchorNode); 
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-    }
-
-    function importProject(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const importedData = JSON.parse(e.target.result);
-                if (importedData.data) {
-                    projectData = importedData.data;
-                    if (importedData.projectName) document.getElementById('projectNameInput').value = importedData.projectName;
-                    
-                    if (importedData.customReqs) {
-                        let maxC = customReqCounter;
-                        Object.keys(importedData.customReqs).forEach(id => {
-                            reqDB[id] = importedData.customReqs[id];
-                            let num = parseInt(id.substring(1));
-                            if (!isNaN(num) && num >= maxC) maxC = num + 1;
-                        });
-                        customReqCounter = maxC;
-                    }
-
-                    alert("✅ פרויקט סייבר נטען בהצלחה!");
-                    if (!document.getElementById('step2').classList.contains('hidden')) {
-                        document.getElementById('displayProjectName').innerText = `פרויקט: ${document.getElementById('projectNameInput').value}`;
-                        loadThreats();
-                    } else if (importedData.projectName) goToStep2();
-                } else alert("❌ קובץ שמירה לא תקין.");
-            } catch (err) { alert("❌ שגיאה בקריאת הקובץ."); }
-            document.getElementById('importFile').value = '';
-        };
-        reader.readAsText(file);
-    }
-
-    // =====================================================================
-    // 🖨️ מנוע הפקת מסמכים מתוקן (עם סיווג שחור וקבוע)
-    // =====================================================================
-    function openReportModal() {
-        const activeThreats = Object.keys(projectData).filter(threat => projectData[threat].reqs.length > 0);
-        if (activeThreats.length === 0) {
-            alert("לא איפיינת עדיין אף איום. לחץ על כרטיסיה כדי להתחיל.");
-            return;
+        if (type === 'pdf') {
+            document.getElementById('printArea').innerHTML = content;
+            window.print();
+        } else {
+            const html = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head><meta charset='utf-8'></head><body dir="rtl">${content}</body></html>`;
+            
+            // התיקון שמונע מסך לבן:
+            const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `אפיון_${name}.doc`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
-        document.getElementById('reportSettingsModal').classList.remove('hidden');
-    }
-
-    function closeReportModal() {
-        document.getElementById('reportSettingsModal').classList.add('hidden');
-    }
-
-    function executeDocumentGeneration(docType, contentMode) {
-        const projectName = document.getElementById('projectNameInput').value;
-        const author = document.getElementById('reportAuthor').value || "לא צוין";
-        const authorTitle = document.getElementById('reportAuthorTitle').value || "יועץ הגנה בסייבר";
-        const reference = document.getElementById('reportReference').value || "ללא סימוכין";
-        const classification = document.getElementById('reportClassification').value;
-        const showIds = document.getElementById('showReqIds').checked;
-
-        let innerContentHTML = ''; 
-        const activeThreats = Object.keys(projectData).filter(threat => projectData[threat].reqs.length > 0);
-
-        const owaspMatrixHTML = `
-            <table border="1" cellspacing="0" cellpadding="8" style="border-collapse: collapse; border: 1px solid black; margin: 0 auto 30px auto; font-family: Arial, sans-serif; font-size: 13px; text-align: center; width: 450px;">
-                <tr style="height: 30px;">
-                    <td colspan="2" rowspan="2" style="border:none;"></td>
-                    <td colspan="3" style="background-color:#d9d9d9; font-weight:bold; border: 1px solid black;">סבירות (Likelihood)</td>
-                </tr>
-                <tr style="height: 30px;">
-                    <td style="background-color:#f2f2f2; border: 1px solid black; font-weight:bold; width:120px;">נמוכה</td>
-                    <td style="background-color:#f2f2f2; border: 1px solid black; font-weight:bold; width:120px;">בינונית</td>
-                    <td style="background-color:#f2f2f2; border: 1px solid black; font-weight:bold; width:120px;">גבוהה</td>
-                </tr>
-                <tr style="height: 40px;">
-                    <td rowspan="3" style="background-color:#d9d9d9; border: 1px solid black; font-weight:bold; width:30px; writing-mode: vertical-rl; transform: rotate(180deg);">השפעה (Impact)</td>
-                    <td style="background-color:#f2f2f2; border: 1px solid black; font-weight:bold; width:60px;">גבוהה</td>
-                    <td style="background-color:#ffff00; color:#000; border: 1px solid black; font-weight:bold;">בינונית</td>
-                    <td style="background-color:#ff0000; color:#fff; border: 1px solid black; font-weight:bold;">גבוהה</td>
-                    <td style="background-color:#c00000; color:#fff; border: 1px solid black; font-weight:bold;">קריטית</td>
-                </tr>
-                <tr style="height: 40px;">
-                    <td style="background-color:#f2f2f2; border: 1px solid black; font-weight:bold;">בינונית</td>
-                    <td style="background-color:#00b050; color:#fff; border: 1px solid black; font-weight:bold;">נמוכה</td>
-                    <td style="background-color:#ffff00; color:#000; border: 1px solid black; font-weight:bold;">בינונית</td>
-                    <td style="background-color:#ff0000; color:#fff; border: 1px solid black; font-weight:bold;">גבוהה</td>
-                </tr>
-                <tr style="height: 40px;">
-                    <td style="background-color:#f2f2f2; border: 1px solid black; font-weight:bold;">נמוכה</td>
-                    <td style="background-color:#92d050; color:#000; border: 1px solid black; font-weight:bold;">נמוכה ביותר</td>
-                    <td style="background-color:#00b050; color:#fff; border: 1px solid black; font-weight:bold;">נמוכה</td>
-                    <td style="background-color:#ffff00; color:#000; border: 1px solid black; font-weight:bold;">בינונית</td>
-                </tr>
-            </table>
-        `;
-
-        if (contentMode === 'full') {
-            
-            // --- פרק 1: איומים ---
-            innerContentHTML += `<h2 style="font-size: 16px; font-weight: bold; text-decoration: underline; font-family: Arial;">1. ניתוח איומים והערכת סיכונים:</h2>`;
-            innerContentHTML += `<ul style="font-family: Arial; font-size: 13px; line-height: 1.6; margin-bottom: 20px; padding-right:20px;">
-                <li>מצ"ב טבלת ניתוח איומים הכוללת את הפרמטרים הבאים: איום, תרחיש תקיפה, סיכון שורשי, וסיכון שיורי לאחר מענה.</li>
-                <li>רמת חומרת הסיכון מבוססת על מטריצת חישוב הסיכון של OWASP, כדלקמן:</li>
-            </ul>`;
-            
-            innerContentHTML += owaspMatrixHTML;
-
-            innerContentHTML += `<p style="font-family: Arial; font-size: 13px; margin-bottom: 10px;">ג. תרחישי תקיפה לפי רמת חומרת סיכון הנגזרים מסל האיומים על המערכת:</p>`;
-            innerContentHTML += `<table border="1" cellspacing="0" cellpadding="8" style="width: 100%; border-collapse: collapse; border: 1px solid black; font-family: Arial, sans-serif; font-size: 12px;">
-                                    <thead>
-                                        <tr style="background-color:#b4c6e7;">
-                                            <th rowspan="2" style="border: 1px solid black; text-align:center;" width="10%">מספר<br>תרחיש</th>
-                                            <th rowspan="2" style="border: 1px solid black; text-align:center;" width="50%">תרחיש תקיפה</th>
-                                            <th colspan="3" style="border: 1px solid black; text-align:center;">רמת סיכון שורשי</th>
-                                        </tr>
-                                        <tr style="background-color:#b4c6e7;">
-                                            <th style="border: 1px solid black; text-align:center;" width="13%">השפעה</th>
-                                            <th style="border: 1px solid black; text-align:center;" width="13%">סבירות</th>
-                                            <th style="border: 1px solid black; text-align:center;" width="14%">חומרת<br>סיכון</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>`;
-            
-            activeThreats.forEach(threat => {
-                let tData = projectData[threat];
-                let colorL = calculateSeverity(tData.inherent.likelihood, "בינונית").inline; 
-                let colorI = calculateSeverity("בינונית", tData.inherent.impact).inline; 
-
-                innerContentHTML += `<tr>
-                    <td style="border: 1px solid black; text-align:center; font-weight:bold;">${threatIdMap[threat]}</td>
-                    <td style="border: 1px solid black; text-align:right;">${escapeHTML(threat)}</td>
-                    <td style="border: 1px solid black; text-align:center; font-weight:bold; ${colorI}">${escapeHTML(tData.inherent.impact || "-")}</td>
-                    <td style="border: 1px solid black; text-align:center; font-weight:bold; ${colorL}">${escapeHTML(tData.inherent.likelihood || "-")}</td>
-                    <td style="border: 1px solid black; text-align:center; font-weight:bold; ${tData.inherent.inline}">${escapeHTML(tData.inherent.severity || "-")}</td>
-                </tr>`;
-            });
-            innerContentHTML += `</tbody></table>`;
-
-            // --- פרק 2: מיפוי ---
-            innerContentHTML += `<br clear="all" style="page-break-before:always; mso-break-type:page-break;" />`;
-            innerContentHTML += `<h2 style="font-size: 16px; font-weight: bold; text-decoration: underline; font-family: Arial;">2. דרישות הגנה בסייבר:</h2>`;
-            innerContentHTML += `<table border="1" cellspacing="0" cellpadding="8" style="width: 100%; border-collapse: collapse; border: 1px solid black; font-family: Arial, sans-serif; font-size: 12px; margin-top:10px;">
-                                    <thead>
-                                        <tr style="background-color:#333333; color: white;">
-                                            <th style="border: 1px solid black; text-align:center;" width="15%">תרחיש<br>תקיפה</th>
-                                            ${showIds ? `<th style="border: 1px solid black; text-align:center;" width="15%">מס'<br>דרישה</th>` : ''}
-                                            <th style="border: 1px solid black; text-align:right;">דרישת הגנה בסייבר למענה</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>`;
-                            
-            activeThreats.forEach(threat => {
-                const tData = projectData[threat];
-                tData.reqs.forEach((id, index) => {
-                    let reqData = reqDB[id];
-                    let rowBg = index % 2 === 0 ? "#ffffff" : "#f2f2f2"; 
-                    innerContentHTML += `<tr style="background-color: ${rowBg};">`;
-                    if (index === 0) {
-                        innerContentHTML += `<td rowspan="${tData.reqs.length}" style="border: 1px solid black; text-align:center; font-weight:bold; vertical-align:middle; ${tData.inherent.inline}">${threatIdMap[threat]}</td>`;
-                    }
-                    if (showIds) innerContentHTML += `<td style="border: 1px solid black; text-align:center; font-family:monospace;">${id}</td>`;
-                    innerContentHTML += `<td style="border: 1px solid black; text-align:right; vertical-align:top;">${escapeHTML(reqData.text)}</td>`;
-                    innerContentHTML += `</tr>`;
-                });
-            });
-            innerContentHTML += `</tbody></table>`;
-
-            // --- פרק 3: שיורי ---
-            innerContentHTML += `<br clear="all" style="page-break-before:always; mso-break-type:page-break;" />`;
-            innerContentHTML += `<h2 style="font-size: 16px; font-weight: bold; text-decoration: underline; font-family: Arial;">3. סיכון שיורי לאחר מימוש דרישות ההגנה:</h2>`;
-            innerContentHTML += `<table border="1" cellspacing="0" cellpadding="8" style="width: 100%; border-collapse: collapse; border: 1px solid black; font-family: Arial, sans-serif; font-size: 12px; margin-top:10px;">
-                                    <thead>
-                                        <tr style="background-color:#b4c6e7;">
-                                            <th rowspan="2" style="border: 1px solid black; text-align:center;" width="10%">מספר<br>תרחיש</th>
-                                            <th rowspan="2" style="border: 1px solid black; text-align:center;" width="50%">תרחיש תקיפה</th>
-                                            <th rowspan="2" style="border: 1px solid black; text-align:center;" width="13%">רמת<br>סיכון<br>שורשי</th>
-                                            <th colspan="2" style="border: 1px solid black; text-align:center;">רמת סיכון שיורי</th>
-                                        </tr>
-                                        <tr style="background-color:#b4c6e7;">
-                                            <th style="border: 1px solid black; text-align:center;" width="13%">סבירות</th>
-                                            <th style="border: 1px solid black; text-align:center;" width="14%">חומרת<br>סיכון</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>`;
-                            
-            activeThreats.forEach(threat => {
-                const tData = projectData[threat];
-                let colorResL = calculateSeverity(tData.residual.likelihood, "בינונית").inline;
-
-                innerContentHTML += `<tr>`;
-                innerContentHTML += `<td style="border: 1px solid black; text-align:center; font-weight:bold;">${threatIdMap[threat]}</td>`;
-                innerContentHTML += `<td style="border: 1px solid black; text-align:right;">${escapeHTML(threat)}</td>`;
-                innerContentHTML += `<td style="border: 1px solid black; text-align:center; font-weight:bold; ${tData.inherent.inline}">${escapeHTML(tData.inherent.severity || "-")}</td>`;
-                innerContentHTML += `<td style="border: 1px solid black; text-align:center; font-weight:bold; ${colorResL}">${escapeHTML(tData.residual.likelihood || "-")}</td>`;
-                innerContentHTML += `<td style="border: 1px solid black; text-align:center; font-weight:bold; ${tData.residual.inline}">${escapeHTML(tData.residual.severity || "-")}</td>`;
-                innerContentHTML += `</tr>`;
-            });
-            innerContentHTML += `</tbody></table>`;
-
-        } else if (contentMode === 'consolidated') {
-            innerContentHTML += `<h2 style="font-size: 16px; font-weight: bold; text-decoration: underline; font-family: Arial;">1. רשימת דרישות הגנה מרוכזת לביצוע</h2>`;
-            let allUniqueReqIds = new Set(); 
-            activeThreats.forEach(threat => { projectData[threat].reqs.forEach(id => allUniqueReqIds.add(id)); });
-            
-            innerContentHTML += `<table border="1" cellspacing="0" cellpadding="8" style="width: 100%; border-collapse: collapse; border: 1px solid black; font-family: Arial, sans-serif; font-size: 13px;">
-                            <thead>
-                                <tr style="background-color:#e0e0e0;">
-                                    ${showIds ? `<th style="border: 1px solid black; text-align:center;" width="12%">מזהה</th>` : ''}
-                                    <th style="border: 1px solid black; text-align:right;" width="18%">קטגוריה</th>
-                                    <th style="border: 1px solid black; text-align:right;" width="50%">מהות הדרישה</th>
-                                    <th style="border: 1px solid black; text-align:center;" width="20%">סטטוס / הערות</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
-            Array.from(allUniqueReqIds).sort().forEach(id => {
-                let reqData = reqDB[id];
-                innerContentHTML += `<tr>`;
-                if (showIds) innerContentHTML += `<td style="border: 1px solid black; text-align:center; font-family:monospace;">${id}</td>`;
-                innerContentHTML += `<td style="border: 1px solid black; text-align:right; vertical-align:top; font-size:12px;">${escapeHTML(reqData.category)}</td>`;
-                innerContentHTML += `<td style="border: 1px solid black; text-align:right; vertical-align:top;">${escapeHTML(reqData.text)}</td>`;
-                innerContentHTML += `<td style="border: 1px solid black;"></td></tr>`;
-            });
-            innerContentHTML += `</tbody></table>`;
-        }
-
-        // --- חתימות ---
-        innerContentHTML += `<br clear="all" style="page-break-before:always; mso-break-type:page-break;" />`;
-        innerContentHTML += `
-            <div style="font-family: Arial, sans-serif; font-size: 14px;">
-                <p><b>בברכה,</b></p><br><br>
-                <table dir="rtl" style="width: 100%; border-collapse: collapse; border: none;">
-                    <tr>
-                        <td style="width: 50%; text-align: right; vertical-align: top; border: none; padding: 0;">
-                            <b>${escapeHTML(author)}</b><br>
-                            ${escapeHTML(authorTitle)}
-                        </td>
-                        <td style="width: 50%; text-align: left; vertical-align: top; border: none; padding: 0;">
-                            <b>מנהל פרויקט / גורם מאשר</b><br>
-                            ____________________
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        `;
-
         closeReportModal();
+    }
 
-        // ======================= ייצוא ל-PDF =======================
-        if (docType === 'pdf') {
-            const printArea = document.getElementById('printArea');
-            
-            let pdfContent = `
-                <table style="width: 100%; border: none;">
-                    <thead style="display: table-header-group;">
-                        <tr><td>
-                            <div style="text-align: center; font-weight: bold; font-size: 16px; font-family: Arial; padding-bottom: 10px; color: black;">- ${classification} -</div>
-                        </td></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>
-                            <div style="background-color:#c00000; color:white; text-align:center; font-weight:bold; padding:8px; margin-bottom:20px; font-family: Arial, sans-serif; border: 1px solid black;">
-                                כל המוסר תוכן מסמך זה כולו או מקצתו, לאדם שאינו מוסמך לכך, עובר עבירה...
-                            </div>
-                            <div style="font-family: Arial; font-size: 14px; line-height: 1.5; margin-bottom: 30px;">
-                                <div style="font-weight:bold; text-decoration:underline; margin-bottom:25px; text-align:right; font-size:16px;">
-                                    הנדון: אפיון דרישות והערכת סיכוני סייבר - פרויקט ${escapeHTML(projectName)}
-                                </div>
-                                מסמך זה מרכז את תהליך אפיון דרישות אבטחת המידע (Security Requirements) לפרויקט <b>${escapeHTML(projectName)}</b>.<br>
-                                התהליך בוצע בהתאם למתודולוגיות ניהול סיכונים תקניות, וכולל סקירה של תרחישי הייחוס הרלוונטיים, הערכת חומרת הסיכון, וגזירת בקרות להפחתת הסבירות למימושם.
-                            </div>
-                            ${innerContentHTML}
-                        </td></tr>
-                    </tbody>
-                    <tfoot style="display: table-footer-group;">
-                        <tr><td>
-                            <div style="border-top: 1px solid black; padding-top: 10px; margin-top: 20px; display: flex; justify-content: space-between; font-family: Arial; font-size: 11px;">
-                                <div style="width: 33%; text-align: right;">סימוכין: ${escapeHTML(reference)}</div>
-                                <div style="width: 33%; text-align: center; font-weight: bold; font-size: 14px; color: black;">- ${classification} -</div>
-                                <div style="width: 33%; text-align: left;">עמוד <span class="page-counter"></span></div>
-                            </div>
-                        </td></tr>
-                    </tfoot>
-                </table>
-            `;
-            printArea.innerHTML = pdfContent;
-            
-            const numberingStyle = document.createElement('style');
-            numberingStyle.id = 'temp-numbering-style';
-            numberingStyle.innerHTML = `body { counter-reset: page; } .page-counter::before { counter-increment: page; content: counter(page); }`;
-            document.head.appendChild(numberingStyle);
+    function exportProject() {
+        const blob = new Blob([JSON.stringify(projectData)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "backup.json"; a.click();
+    }
 
-            printArea.classList.remove('hidden');
-            setTimeout(() => { window.print(); printArea.classList.add('hidden'); document.getElementById('temp-numbering-style').remove(); }, 300);
-        } 
-        
-        // ======================= ייצוא ל-Word (מנגנון חדש ונקי) =======================
-        else if (docType === 'word') {
-            
-            const wordHeaderDef = `
-                <div style="mso-element:header" id="h1">
-                    <p style="text-align:center; font-weight:bold; font-size:14pt; font-family:Arial; color:black; margin:0; padding-bottom:10px;">- ${classification} -</p>
-                </div>`;
-
-            const wordFooterDef = `
-                <div style="mso-element:footer" id="f1">
-                    <table dir="rtl" style="width:100%; border-top:1px solid black; padding-top:5px; font-size:10pt; font-family:Arial;">
-                        <tr>
-                            <td style="width:33%; text-align:right;">סימוכין: ${escapeHTML(reference)}</td>
-                            <td style="width:34%; text-align:center; font-weight:bold; color:black;">- ${classification} -</td>
-                            <td style="width:33%; text-align:left;">עמוד <span style="mso-field-code:' PAGE '"></span> מתוך <span style="mso-field-code:' NUMPAGES '"></span></td>
-                        </tr>
-                    </table>
-                </div>`;
-
-            const htmlStart = `
-            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-            <head>
-                <meta charset='utf-8'><title>אפיון סייבר</title>
-                <style>
-                    @page WordSection1 { 
-                        size: 595.3pt 841.9pt; 
-                        margin: 1.0in 1.0in 1.0in 1.0in; 
-                        mso-header-margin: .5in; 
-                        mso-footer-margin: .5in; 
-                        mso-header: h1; 
-                        mso-footer: f1; 
-                    }
-                    div.WordSection1 { page: WordSection1; }
-                    table { border-collapse: collapse; }
-                </style>
-            </head>
-            <body dir="rtl">
-                
-                <table id="hrdftrtbl" border="0" cellspacing="0" cellpadding="0" style="display:none;">
-                    <tr><td>${wordHeaderDef}</td><td>${wordFooterDef}</td></tr>
-                </table>
-                
-                <div class="WordSection1">
-                    <div style="background-color:#c00000; color:white; text-align:center; font-weight:bold; padding:8px; margin-bottom:20px; font-family: Arial, sans-serif; border: 1px solid black;">
-                        כל המוסר תוכן מסמך זה כולו או מקצתו, לאדם שאינו מוסמך לכך, עובר עבירה...
-                    </div>
-                    <div style="font-family: Arial; font-size: 14px; line-height: 1.5; margin-bottom: 30px;">
-                        <div style="font-weight:bold; text-decoration:underline; margin-bottom:25px; text-align:right; font-size:14pt;">
-                            הנדון: אפיון דרישות והערכת סיכוני סייבר - פרויקט ${escapeHTML(projectName)}
-                        </div>
-                        מסמך זה מרכז את תהליך אפיון דרישות אבטחת המידע (Security Requirements) לפרויקט <b>${escapeHTML(projectName)}</b>.<br>
-                        התהליך בוצע בהתאם למתודולוגיות ניהול סיכונים תקניות, וכולל סקירה של תרחישי הייחוס הרלוונטיים, הערכת חומרת הסיכון, וגזירת בקרות להפחתת הסבירות למימושם.
-                    </div>
-                    ${innerContentHTML}
-                </div>
-            </body></html>`;
-            
-            const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(htmlStart);
-            const fileDownload = document.createElement("a");
-            document.body.appendChild(fileDownload);
-            fileDownload.href = source;
-            let fileNameSuffix = contentMode === 'full' ? 'אפיון_מלא' : 'דרישות_בלבד';
-            fileDownload.download = `אפיון_סייבר_${projectName}_${fileNameSuffix}.doc`;
-            fileDownload.click();
-            document.body.removeChild(fileDownload);
-        }
+    function importProject(e) {
+        const reader = new FileReader();
+        reader.onload = (ev) => { projectData = JSON.parse(ev.target.result); loadThreats(); alert("נטען!"); };
+        reader.readAsText(e.target.files[0]);
     }
 </script>
 </body>
