@@ -1,59 +1,359 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html dir="rtl" lang="he">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מייצר DOCX אמיתי</title>
+    <title>AutoThreatAnalysis - מערכת לניהול דרישות סייבר</title>
     <script src="https://unpkg.com/docx@7.1.0/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
     <style>
-        body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #2b5797; }
-        .btn { padding: 20px 40px; background: white; color: #2b5797; border-radius: 12px; border: none; font-weight: bold; font-size: 1.3rem; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        /* =========================================
+           1. עיצוב האפליקציה הכללי
+        ========================================= */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 850px; max-width: 95%; }
+        .hidden { display: none !important; }
+        
+        h1, h2, h3 { color: #2c3e50; text-align: center; font-weight: 800; }
+        .project-title { text-align: center; color: #7f8c8d; margin-bottom: 30px; font-size: 1.2em; }
+        
+        input[type="text"], input[type="date"], select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e0e6ed; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s; font-family: inherit; }
+        input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus { border-color: #3498db; outline: none; }
+        
+        button { background-color: #3498db; color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: 0.2s; }
+        button:hover { background-color: #2980b9; }
+        .btn-secondary { background-color: #95a5a6; }
+        .btn-outline { background-color: transparent; color: #3498db; border: 2px solid #3498db; margin-bottom: 15px; }
+        .btn-word { background-color: #2b579a; color: white; border: 1px solid #1e3f6f; margin-bottom: 10px; }
+        .btn-pdf { background-color: #e74c3c; color: white; border: 1px solid #c0392b; margin-bottom: 10px;}
+        .btn-save { background-color: #f39c12; color: white; margin-top: 10px; }
+        
+        .threats-scroll-area { max-height: 55vh; overflow-y: auto; padding-right: 10px; margin-bottom: 30px; }
+        .category-title { font-size: 1.1em; color: #34495e; border-bottom: 2px solid #ecf0f1; padding-bottom: 8px; margin-top: 25px; margin-bottom: 15px; font-weight: bold; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        
+        .threat-card { background: #fff; border: 2px solid #e0e6ed; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.2s ease; user-select: none; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .threat-card.selected { border-color: #2ecc71; background-color: #f0fdf4; }
+        .threat-card.selected::after { content: "✓"; position: absolute; top: 10px; left: 10px; color: #2ecc71; font-weight: bold; }
+        
+        .card-icon { font-size: 28px; margin-bottom: 8px; }
+        .card-text { font-size: 14px; color: #34495e; font-weight: 600; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; width: 750px; max-width: 95%; height: 85vh; border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.3); overflow: hidden; }
+        .modal-body { padding: 30px; overflow-y: auto; flex-grow: 1; }
+        
+        .badge-risk { display: inline-block; padding: 8px 20px; border-radius: 20px; font-weight: bold; color: white; }
+        .bg-very-low { background-color: #92d050; color: #000; } 
+        .bg-low { background-color: #00b050; } 
+        .bg-medium { background-color: #ffff00; color: #000; } 
+        .bg-high { background-color: #ff0000; } 
+        .bg-critical { background-color: #c00000; } 
+        .bg-none { background-color: #bdc3c7; color: #333; } 
+
+        .req-item { display: flex; align-items: flex-start; gap: 12px; background: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e9ecef; cursor: pointer; margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
-    <button onclick="createDocx()" class="btn">הורד קובץ .docx אמיתי</button>
+    <div id="printArea" class="hidden"></div>
+    <input type="file" id="importFile" style="display:none" accept=".json" onchange="importProject(event)">
 
-    <script>
-        function createDocx() {
-            const { Document, Packer, Paragraph, TextRun, AlignmentType } = docx;
+    <div id="step1" class="container">
+        <h1>🛡️ AutoThreatAnalysis</h1>
+        <label style="display:block; margin-bottom:10px; font-weight:bold;">תן שם לפרויקט:</label>
+        <input type="text" id="projectNameInput" placeholder="שם הפרויקט שלך...">
+        <button onclick="goToStep2()">🚀 התחל לאפיין</button>
+        <button onclick="document.getElementById('importFile').click()" class="btn-outline" style="margin-top:10px;">📂 טען פרויקט שמור</button>
+    </div>
 
-            // יצירת מבנה המסמך
+    <div id="step2" class="container hidden">
+        <h2>בחירת איומים מתוך הקטלוג</h2>
+        <div id="displayProjectName" class="project-title"></div>
+        <div id="threatsContainer" class="threats-scroll-area"></div>
+        <div style="display:flex; gap:15px; margin-top: 20px;">
+            <button onclick="goToStep1()" class="btn-secondary">חזור</button>
+            <button onclick="openReportModal()" style="background-color: #2ecc71;">📄 הפקת דוחות</button>
+            <button onclick="exportProject()" class="btn-save">💾 שמור גיבוי</button>
+        </div>
+    </div>
+
+    <div id="reportSettingsModal" class="modal-overlay hidden">
+        <div class="modal-content" style="height: auto; width: 500px;">
+            <div class="modal-body">
+                <h3>הגדרות הפקת מסמך</h3>
+                <label>שם חותם:</label>
+                <input type="text" id="reportAuthor" placeholder="שם מלא">
+                <label>סיווג:</label>
+                <select id="reportClassification">
+                    <option value="בלמ&quot;ס">בלמ"ס</option>
+                    <option value="שמור">שמור</option>
+                    <option value="סודי" selected>סודי</option>
+                </select>
+                <button onclick="executeDocumentGeneration('word')" class="btn-word">📝 הורד קובץ Word תקני</button>
+                <button onclick="executeDocumentGeneration('pdf')" class="btn-pdf">📄 הדפס PDF</button>
+                <button onclick="closeReportModal()" class="btn-secondary">סגור</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="threatWizardModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h3 id="wizardThreatTitle">טיפול באיום</h3>
+                <div id="wizardStep1">
+                    <h4>שלב 1: הערכת סיכון</h4>
+                    <select id="inherentLikelihood" onchange="updateWizardRisk()">
+                        <option value="">סבירות...</option>
+                        <option value="נמוכה">נמוכה</option>
+                        <option value="בינונית">בינונית</option>
+                        <option value="גבוהה">גבוהה</option>
+                    </select>
+                    <select id="inherentImpact" onchange="updateWizardRisk()">
+                        <option value="">השפעה...</option>
+                        <option value="נמוכה">נמוכה</option>
+                        <option value="בינונית">בינונית</option>
+                        <option value="גבוהה">גבוהה</option>
+                    </select>
+                    <div id="inherentBadge" class="badge-risk bg-none">טרם נקבע</div>
+                    <hr>
+                    <h4>שלב 2: בחירת דרישות הגנה</h4>
+                    <div id="allReqsContainer"></div>
+                </div>
+                <div style="margin-top:20px;">
+                    <button onclick="saveThreatWizard()" style="background-color: #27ae60;">💾 שמור וסיים</button>
+                    <button onclick="closeWizard()" class="btn-outline">ביטול</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const categorizedRequirements = {
+        "בקרת גישה": [
+            { id: "R1", text: "הטמעת הזדהות רב-שלבית (MFA)." },
+            { id: "R2", text: "הגבלת הרשאות גישה (Least Privilege)." }
+        ],
+        "הגנת נתונים": [
+            { id: "R3", text: "הצפנת נתונים במנוחה (AES-256)." },
+            { id: "R4", text: "ביצוע גיבויים תקופתיים." }
+        ]
+    };
+
+    const categorizedThreats = {
+        "איומי סייבר": [
+            { name: "חדירה מרחוק", icon: "🌐" },
+            { name: "מתקפת כופרה", icon: "💀" },
+            { name: "דלף מידע", icon: "🔓" }
+        ]
+    };
+
+    const reqDB = {}; 
+    for (const [cat, reqs] of Object.entries(categorizedRequirements)) {
+        reqs.forEach(r => reqDB[r.id] = { category: cat, text: r.text });
+    }
+
+    let projectData = {}; 
+    let currentEditingThreat = "";
+
+    function calculateSeverity(l, i) {
+        if (!l || !i) return { text: "טרם נקבע", class: "bg-none", color: "888888" };
+        const matrix = {
+            "נמוכה": { "נמוכה": {t:"נמוכה ביותר", c:"92d050"}, "בינונית": {t:"נמוכה", c:"00b050"}, "גבוהה": {t:"בינונית", c:"ffff00"} },
+            "בינונית": { "נמוכה": {t:"נמוכה", c:"00b050"}, "בינונית": {t:"בינונית", c:"ffff00"}, "גבוהה": {t:"גבוהה", c:"ff0000"} },
+            "גבוהה": { "נמוכה": {t:"בינונית", c:"ffff00"}, "בינונית": {t:"גבוהה", c:"ff0000"}, "גבוהה": {t:"קריטית", c:"c00000"} }
+        };
+        const res = matrix[l][i];
+        return { text: res.t, class: "bg-custom", color: res.c };
+    }
+
+    function updateWizardRisk() {
+        const l = document.getElementById('inherentLikelihood').value;
+        const i = document.getElementById('inherentImpact').value;
+        const res = calculateSeverity(l, i);
+        const b = document.getElementById('inherentBadge');
+        b.innerText = res.text;
+        b.style.backgroundColor = '#' + res.color;
+    }
+
+    function openModal(t) {
+        currentEditingThreat = t;
+        document.getElementById('wizardThreatTitle').innerText = t;
+        const data = projectData[t] || { reqs: [], inherent: {} };
+        document.getElementById('inherentLikelihood').value = data.inherent.likelihood || "";
+        document.getElementById('inherentImpact').value = data.inherent.impact || "";
+        updateWizardRisk();
+
+        const container = document.getElementById('allReqsContainer');
+        container.innerHTML = '';
+        for (const [cat, reqs] of Object.entries(categorizedRequirements)) {
+            let html = `<strong>${cat}</strong><br>`;
+            reqs.forEach(r => {
+                let checked = data.reqs.includes(r.id) ? "checked" : "";
+                html += `<label class="req-item"><input type="checkbox" value="${r.id}" class="req-cb" ${checked}> ${r.id}: ${r.text}</label>`;
+            });
+            container.innerHTML += html;
+        }
+        document.getElementById('threatWizardModal').classList.remove('hidden');
+    }
+
+    function saveThreatWizard() {
+        const cbs = document.querySelectorAll('.req-cb:checked');
+        const ids = Array.from(cbs).map(c => c.value);
+        const l = document.getElementById('inherentLikelihood').value;
+        const i = document.getElementById('inherentImpact').value;
+        const sev = calculateSeverity(l, i);
+        
+        projectData[currentEditingThreat] = {
+            reqs: ids,
+            inherent: { likelihood: l, impact: i, severity: sev.text, color: sev.color }
+        };
+        loadThreats();
+        closeWizard();
+    }
+
+    function closeWizard() { document.getElementById('threatWizardModal').classList.add('hidden'); }
+    function openReportModal() { document.getElementById('reportSettingsModal').classList.remove('hidden'); }
+    function closeReportModal() { document.getElementById('reportSettingsModal').classList.add('hidden'); }
+
+    function loadThreats() {
+        const container = document.getElementById('threatsContainer');
+        container.innerHTML = '';
+        for (const [cat, threats] of Object.entries(categorizedThreats)) {
+            container.innerHTML += `<div class="category-title">${cat}</div>`;
+            let grid = `<div class="cards-grid">`;
+            threats.forEach(t => {
+                let sel = projectData[t.name] && projectData[t.name].reqs.length > 0 ? "selected" : "";
+                grid += `<div class="threat-card ${sel}" onclick="openModal('${t.name}')">
+                    <span class="card-icon">${t.icon}</span>
+                    <span class="card-text">${t.name}</span>
+                </div>`;
+            });
+            container.innerHTML += grid + `</div>`;
+        }
+    }
+
+    function goToStep2() {
+        if (!document.getElementById('projectNameInput').value) return alert("הכנס שם פרויקט");
+        document.getElementById('displayProjectName').innerText = document.getElementById('projectNameInput').value;
+        loadThreats();
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
+    }
+
+    function goToStep1() {
+        document.getElementById('step2').classList.add('hidden');
+        document.getElementById('step1').classList.remove('hidden');
+    }
+
+    async function executeDocumentGeneration(type) {
+        const name = document.getElementById('projectNameInput').value;
+        const author = document.getElementById('reportAuthor').value;
+        const classification = document.getElementById('reportClassification').value;
+
+        if (type === 'word') {
+            const { Document, Packer, Paragraph, TextRun, AlignmentType, HeadingLevel, BorderStyle } = docx;
+
+            const children = [
+                new Paragraph({
+                    text: `אפיון סייבר - ${name}`,
+                    heading: HeadingLevel.TITLE,
+                    alignment: AlignmentType.CENTER,
+                    bidirectional: true
+                }),
+                new Paragraph({
+                    children: [
+                        new TextRun({ text: `מחבר: ${author}`, bold: true, font: "Arial" }),
+                        new TextRun({ text: ` | סיווג: ${classification}`, bold: true, color: "FF0000", font: "Arial" })
+                    ],
+                    alignment: AlignmentType.CENTER,
+                    bidirectional: true,
+                    spacing: { after: 400 }
+                })
+            ];
+
+            // מעבר על האיומים שנבחרו
+            Object.keys(projectData).forEach(threatName => {
+                const data = projectData[threatName];
+                if (data.reqs.length === 0) return;
+
+                children.push(new Paragraph({
+                    text: `איום: ${threatName}`,
+                    heading: HeadingLevel.HEADING_2,
+                    alignment: AlignmentType.RIGHT,
+                    bidirectional: true,
+                    spacing: { before: 400 }
+                }));
+
+                children.push(new Paragraph({
+                    children: [
+                        new TextRun({ text: "רמת סיכון: ", bold: true, font: "Arial" }),
+                        new TextRun({ 
+                            text: data.inherent.severity, 
+                            color: data.inherent.color === "ffff00" ? "000000" : "FFFFFF", 
+                            shading: { fill: data.inherent.color },
+                            font: "Arial" 
+                        })
+                    ],
+                    alignment: AlignmentType.RIGHT,
+                    bidirectional: true
+                }));
+
+                children.push(new Paragraph({
+                    text: "דרישות הגנה:",
+                    bold: true,
+                    alignment: AlignmentType.RIGHT,
+                    bidirectional: true,
+                    spacing: { before: 200 }
+                }));
+
+                data.reqs.forEach(rid => {
+                    children.push(new Paragraph({
+                        text: `• ${rid}: ${reqDB[rid].text}`,
+                        alignment: AlignmentType.RIGHT,
+                        bidirectional: true,
+                        font: "Arial"
+                    }));
+                });
+            });
+
             const doc = new Document({
                 sections: [{
                     properties: {},
-                    children: [
-                        new Paragraph({
-                            alignment: AlignmentType.CENTER,
-                            children: [
-                                new TextRun({
-                                    text: "שלום",
-                                    bold: true,
-                                    size: 72, // גודל 36 בנקודות וורד
-                                    font: "Arial"
-                                }),
-                            ],
-                        }),
-                        new Paragraph({
-                            alignment: AlignmentType.CENTER,
-                            children: [
-                                new TextRun({
-                                    text: "זהו קובץ docx תקין שנוצר ב-JavaScript",
-                                    size: 28,
-                                    font: "Arial"
-                                }),
-                            ],
-                        }),
-                    ],
-                }],
+                    children: children
+                }]
             });
 
-            // יצירת הקובץ והורדה
-            Packer.toBlob(doc).then(blob => {
-                saveAs(blob, "hello_world.docx");
+            const blob = await Packer.toBlob(doc);
+            saveAs(blob, `אפיון_${name}.docx`);
+
+        } else {
+            // לוגיקת PDF (הדפסה)
+            let content = `<h1>אפיון סייבר - ${name}</h1><p>מחבר: ${author}</p><p>סיווג: ${classification}</p><hr>`;
+            Object.keys(projectData).forEach(t => {
+                const d = projectData[t];
+                content += `<h3>איום: ${t}</h3><p>חומרה: ${d.inherent.severity}</p><ul>`;
+                d.reqs.forEach(rid => content += `<li>${reqDB[rid].text}</li>`);
+                content += `</ul>`;
             });
+            document.getElementById('printArea').innerHTML = content;
+            window.print();
         }
-    </script>
+        closeReportModal();
+    }
+
+    function exportProject() {
+        const blob = new Blob([JSON.stringify(projectData)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "backup.json"; a.click();
+    }
+
+    function importProject(e) {
+        const reader = new FileReader();
+        reader.onload = (ev) => { projectData = JSON.parse(ev.target.result); loadThreats(); alert("נטען!"); };
+        reader.readAsText(e.target.files[0]);
+    }
+</script>
 </body>
 </html>
