@@ -3,51 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word for iPad</title>
+    <title>Word XML Generator</title>
     <style>
-        body { font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #2b5797; }
-        .download-btn { padding: 20px 40px; background: white; color: #2b5797; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1.2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: 0.3s; }
-        .download-btn:active { transform: scale(0.95); }
+        body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f2f5; }
+        .btn { padding: 18px 35px; background: #2b5797; color: white; border-radius: 12px; border: none; font-weight: bold; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     </style>
 </head>
 <body>
 
-    <a href="#" id="exportBtn" class="download-btn">צור והורד מסמך וורד</a>
+    <button onclick="downloadWordXML()" class="btn">הורד מסמך XML תקני</button>
 
     <script>
-        document.getElementById('exportBtn').addEventListener('click', function(e) {
-            e.preventDefault();
+        function downloadWordXML() {
+            // מבנה XML תקני של Microsoft Word
+            const xmlContent = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?mso-application progid="Word.Document"?>
+<w:wordDocument xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:sl="http://schemas.microsoft.com/schemaLibrary/2003/core" xmlns:aml="http://schemas.microsoft.com/aml/2001/core" xmlns:wx="http://schemas.microsoft.com/office/word/2003/auxHint" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882" w:macrosPresent="no" w:embeddedObjPresent="no" w:ocxPresent="no" xml:space="preserve">
+    <w:body>
+        <w:p>
+            <w:pPr>
+                <w:bidi w:val="on"/>
+                <w:jc w:val="center"/>
+            </w:pPr>
+            <w:r>
+                <w:rPr>
+                    <w:rFonts w:ascii="Arial" w:h-ansi="Arial" w:cs="Arial"/>
+                    <w:sz w:val="48"/>
+                    <w:sz-cs w:val="48"/>
+                    <w:b/>
+                </w:rPr>
+                <w:t>שלום</w:t>
+            </w:r>
+        </w:p>
+    </w:body>
+</w:wordDocument>`;
 
-            // תוכן ה-HTML שיהפוך למסמך
-            const content = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40' dir='rtl'>
-                <head><meta charset='utf-8'></head>
-                <body style="font-family:Arial;">
-                    <h1 style="color:blue;">שלום</h1>
-                    <p>זהו מסמך וורד אמיתי שנוצר מהדפדפן.</p>
-                </body>
-                </html>`;
-
-            // יצירת Blob עם MIME-TYPE של אופיס המודרני
-            const blob = new Blob(['\ufeff', content], {
-                type: 'application/msword' 
-            });
-
-            // יצירת לינק זמני
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'document.doc'; // השארתי .doc כי iOS מעכל את זה טוב יותר בשיטה הזו
+            const blob = new Blob([xmlContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
             
-            document.body.appendChild(a);
-            a.click();
+            link.href = url;
+            link.download = 'hello.xml'; // וורד יודע לפתוח קבצי .xml כיוון שהגדרנו mso-application
             
-            // ניקוי
-            setTimeout(() => {
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            }, 0);
-        });
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     </script>
 </body>
 </html>
