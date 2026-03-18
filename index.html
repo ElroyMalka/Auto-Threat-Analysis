@@ -3,51 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word XML Generator</title>
+    <title>מייצר DOCX אמיתי</title>
+    <script src="https://unpkg.com/docx@7.1.0/build/index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
-        body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f2f5; }
-        .btn { padding: 18px 35px; background: #2b5797; color: white; border-radius: 12px; border: none; font-weight: bold; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #2b5797; }
+        .btn { padding: 20px 40px; background: white; color: #2b5797; border-radius: 12px; border: none; font-weight: bold; font-size: 1.3rem; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
 
-    <button onclick="downloadWordXML()" class="btn">הורד מסמך XML תקני</button>
+    <button onclick="createDocx()" class="btn">הורד קובץ .docx אמיתי</button>
 
     <script>
-        function downloadWordXML() {
-            // מבנה XML תקני של Microsoft Word
-            const xmlContent = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<?mso-application progid="Word.Document"?>
-<w:wordDocument xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:sl="http://schemas.microsoft.com/schemaLibrary/2003/core" xmlns:aml="http://schemas.microsoft.com/aml/2001/core" xmlns:wx="http://schemas.microsoft.com/office/word/2003/auxHint" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882" w:macrosPresent="no" w:embeddedObjPresent="no" w:ocxPresent="no" xml:space="preserve">
-    <w:body>
-        <w:p>
-            <w:pPr>
-                <w:bidi w:val="on"/>
-                <w:jc w:val="center"/>
-            </w:pPr>
-            <w:r>
-                <w:rPr>
-                    <w:rFonts w:ascii="Arial" w:h-ansi="Arial" w:cs="Arial"/>
-                    <w:sz w:val="48"/>
-                    <w:sz-cs w:val="48"/>
-                    <w:b/>
-                </w:rPr>
-                <w:t>שלום</w:t>
-            </w:r>
-        </w:p>
-    </w:body>
-</w:wordDocument>`;
+        function createDocx() {
+            const { Document, Packer, Paragraph, TextRun, AlignmentType } = docx;
 
-            const blob = new Blob([xmlContent], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            
-            link.href = url;
-            link.download = 'hello.xml'; // וורד יודע לפתוח קבצי .xml כיוון שהגדרנו mso-application
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // יצירת מבנה המסמך
+            const doc = new Document({
+                sections: [{
+                    properties: {},
+                    children: [
+                        new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            children: [
+                                new TextRun({
+                                    text: "שלום",
+                                    bold: true,
+                                    size: 72, // גודל 36 בנקודות וורד
+                                    font: "Arial"
+                                }),
+                            ],
+                        }),
+                        new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            children: [
+                                new TextRun({
+                                    text: "זהו קובץ docx תקין שנוצר ב-JavaScript",
+                                    size: 28,
+                                    font: "Arial"
+                                }),
+                            ],
+                        }),
+                    ],
+                }],
+            });
+
+            // יצירת הקובץ והורדה
+            Packer.toBlob(doc).then(blob => {
+                saveAs(blob, "hello_world.docx");
+            });
         }
     </script>
 </body>
