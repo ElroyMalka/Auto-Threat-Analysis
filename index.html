@@ -1,46 +1,50 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Generator</title>
+    <title>Word Fix for iPad</title>
     <style>
-        body { font-family: -apple-system, system-ui, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f0f0f5; }
-        button { padding: 20px 40px; font-size: 1.5rem; cursor: pointer; background-color: #007AFF; color: white; border: none; border-radius: 12px; font-weight: bold; }
+        body { 
+            font-family: -apple-system, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            background-color: #f0f0f7; 
+        }
+        .btn { 
+            padding: 20px 40px; 
+            font-size: 1.2rem; 
+            background-color: #2b5797; 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
 
-    <button onclick="downloadDoc()">הורד מסמך "שלום" לאייפד</button>
+    <a id="downloadLink" class="btn" href="#">הורד מסמך וורד (שלום)</a>
 
     <script>
-        function downloadDoc() {
-            // התוכן של המסמך בפורמט HTML שוורד מבין
-            const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' "+
-                           "xmlns:w='urn:schemas-microsoft-com:office:word' "+
-                           "xmlns='http://www.w3.org/TR/REC-html40' dir='rtl'>"+
-                           "<head><meta charset='utf-8'></head><body>";
-            const footer = "</body></html>";
-            const content = "<h1>שלום</h1><p>זהו מסמך שנוצר מהאייפד!</p>";
-            
-            const sourceHTML = header + content + footer;
-            
-            // יצירת קישור להורדה
-            const blob = new Blob(['\ufeff', sourceHTML], {
-                type: 'application/msword'
-            });
-            
+        window.onload = function() {
+            // תוכן בפורמט RTF שתומך בעברית (קידוד ANSI)
+            // \u1513\u1dc\u1dc\u1dd - זה הייצוג של "שלום" ב-RTF
+            const rtfContent = "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\n" +
+                               "{\\f0\\fs40 \\rtlch \\u1513?\\u1dc?\\u1dc?\\u1dd?}\n}";
+
+            const blob = new Blob([rtfContent], { type: 'application/msword' });
             const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
             
+            const link = document.getElementById('downloadLink');
             link.href = url;
-            link.download = "hello.doc"; // סיומת .doc עובדת טוב יותר בשיטה זו
-            
-            // הוספה למסמך, לחיצה והסרה (נדרש בחלק מהדפדפנים)
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+            link.download = "shalom.doc";
+        };
     </script>
 </body>
 </html>
