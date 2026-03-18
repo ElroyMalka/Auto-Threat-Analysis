@@ -682,14 +682,14 @@
     }
 
     // =========================================================
-    // פונקציות ליצירת קובץ ה-DOCX עם docx.js
+    // פונקציות ליצירת קובץ ה-DOCX עם docx.js - הגרסה המתוקנת והבטוחה
     // =========================================================
 
-    function createDocxCell(text, bgColor = null, isBold = false, align = docx.AlignmentType.CENTER) {
+    function createDocxCell(text, bgColor = null, isBold = false, align = docx.AlignmentType.CENTER, textColor = "000000") {
         return new docx.TableCell({
             children: [
                 new docx.Paragraph({
-                    children: [new docx.TextRun({ text: text || "-", bold: isBold, font: "Arial", size: 22 })],
+                    children: [new docx.TextRun({ text: text || "-", bold: isBold, font: "Arial", size: 22, color: textColor })],
                     alignment: align,
                     bidirectional: true
                 })
@@ -810,14 +810,12 @@
             const reqRows = [
                 new TableRow({
                     children: [
-                        createDocxCell("איום", "333333", true),
-                        createDocxCell("מזהה דרישה", "333333", true),
-                        createDocxCell("מהות הדרישה לביצוע", "333333", true)
+                        createDocxCell("איום", "333333", true, AlignmentType.CENTER, "ffffff"),
+                        createDocxCell("מזהה דרישה", "333333", true, AlignmentType.CENTER, "ffffff"),
+                        createDocxCell("מהות הדרישה לביצוע", "333333", true, AlignmentType.CENTER, "ffffff")
                     ]
                 })
             ];
-
-            reqRows[0].cells.forEach(cell => cell.root[0].root[0].root[1].color = "ffffff");
 
             activeThreats.forEach(threat => {
                 const tData = projectData[threat];
