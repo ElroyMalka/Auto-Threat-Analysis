@@ -1,50 +1,53 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Fix for iPad</title>
+    <title>Word for iPad</title>
     <style>
-        body { 
-            font-family: -apple-system, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            background-color: #f0f0f7; 
-        }
-        .btn { 
-            padding: 20px 40px; 
-            font-size: 1.2rem; 
-            background-color: #2b5797; 
-            color: white; 
-            border: none; 
-            border-radius: 10px; 
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-decoration: none;
-        }
+        body { font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #2b5797; }
+        .download-btn { padding: 20px 40px; background: white; color: #2b5797; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1.2rem; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: 0.3s; }
+        .download-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
 
-    <a id="downloadLink" class="btn" href="#">הורד מסמך וורד (שלום)</a>
+    <a href="#" id="exportBtn" class="download-btn">צור והורד מסמך וורד</a>
 
     <script>
-        window.onload = function() {
-            // תוכן בפורמט RTF שתומך בעברית (קידוד ANSI)
-            // \u1513\u1dc\u1dc\u1dd - זה הייצוג של "שלום" ב-RTF
-            const rtfContent = "{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}}\n" +
-                               "{\\f0\\fs40 \\rtlch \\u1513?\\u1dc?\\u1dc?\\u1dd?}\n}";
+        document.getElementById('exportBtn').addEventListener('click', function(e) {
+            e.preventDefault();
 
-            const blob = new Blob([rtfContent], { type: 'application/msword' });
-            const url = URL.createObjectURL(blob);
+            // תוכן ה-HTML שיהפוך למסמך
+            const content = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40' dir='rtl'>
+                <head><meta charset='utf-8'></head>
+                <body style="font-family:Arial;">
+                    <h1 style="color:blue;">שלום</h1>
+                    <p>זהו מסמך וורד אמיתי שנוצר מהדפדפן.</p>
+                </body>
+                </html>`;
+
+            // יצירת Blob עם MIME-TYPE של אופיס המודרני
+            const blob = new Blob(['\ufeff', content], {
+                type: 'application/msword' 
+            });
+
+            // יצירת לינק זמני
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'document.doc'; // השארתי .doc כי iOS מעכל את זה טוב יותר בשיטה הזו
             
-            const link = document.getElementById('downloadLink');
-            link.href = url;
-            link.download = "shalom.doc";
-        };
+            document.body.appendChild(a);
+            a.click();
+            
+            // ניקוי
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }, 0);
+        });
     </script>
 </body>
 </html>
