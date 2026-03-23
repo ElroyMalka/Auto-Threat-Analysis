@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>AutoThreatAnalysis - מערכת לניהול דרישות סייבר</title>
-    
+
     <script src="https://unpkg.com/docx@7.1.0/build/index.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
@@ -11,106 +11,575 @@
         /* =========================================
            1. עיצוב האפליקציה הכללי
         ========================================= */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 850px; max-width: 95%; }
-        .hidden { display: none !important; }
-        
-        h1, h2, h3 { color: #2c3e50; text-align: center; font-weight: 800; }
-        .project-title { text-align: center; color: #7f8c8d; margin-bottom: 30px; font-size: 1.2em; }
-        
-        input[type="text"], input[type="date"], select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e0e6ed; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: border-color 0.3s; font-family: inherit; }
-        input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus { border-color: #3498db; outline: none; }
-        select:disabled { background-color: #ecf0f1; cursor: not-allowed; color: #7f8c8d; font-weight: bold; }
-        textarea { resize: vertical; }
-        
-        button { background-color: #3498db; color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: 0.2s; }
-        button:hover { background-color: #2980b9; }
-        .btn-secondary { background-color: #95a5a6; }
-        .btn-secondary:hover { background-color: #7f8c8d; }
-        .btn-outline { background-color: transparent; color: #3498db; border: 2px solid #3498db; margin-bottom: 15px; }
-        .btn-outline:hover { background-color: #ebf5fb; }
-        .btn-word { background-color: #2b579a; color: white; border: 1px solid #1e3f6f; margin-bottom: 10px; }
-        .btn-word:hover { background-color: #1e3f6f; }
-        .btn-pdf { background-color: #e74c3c; color: white; border: 1px solid #c0392b; margin-bottom: 10px;}
-        .btn-pdf:hover { background-color: #c0392b; }
-        .btn-save { background-color: #f39c12; color: white; margin-top: 10px; }
-        
-        .threats-scroll-area { max-height: 55vh; overflow-y: auto; padding-right: 10px; margin-bottom: 30px; }
-        .category-title { font-size: 1.1em; color: #34495e; border-bottom: 2px solid #ecf0f1; padding-bottom: 8px; margin-top: 25px; margin-bottom: 15px; font-weight: bold; }
-        .category-title:first-child { margin-top: 0; }
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        
-        .threat-card { background: #fff; border: 2px solid #e0e6ed; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.2s ease; user-select: none; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .threat-card:hover { border-color: #bdc3c7; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .threat-card.selected { border-color: #2ecc71; background-color: #f0fdf4; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.15); }
-        .threat-card.selected::after { content: "✓"; position: absolute; top: 10px; left: 10px; color: #2ecc71; font-size: 20px; font-weight: bold; }
-        
-        .card-icon { font-size: 28px; margin-bottom: 8px; display: block; }
-        .card-text { font-size: 14px; color: #34495e; font-weight: 600; line-height: 1.3; }
-        .threat-id-label { font-family: monospace; background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-bottom: 5px; display: inline-block; color: #333; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            width: 850px;
+            max-width: 95%;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+            text-align: center;
+            font-weight: 800;
+        }
+
+        .project-title {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        input[type="text"], input[type="date"], select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+            input[type="text"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+                border-color: #3498db;
+                outline: none;
+            }
+
+            select:disabled {
+                background-color: #ecf0f1;
+                cursor: not-allowed;
+                color: #7f8c8d;
+                font-weight: bold;
+            }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+            button:hover {
+                background-color: #2980b9;
+            }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+        }
+
+            .btn-secondary:hover {
+                background-color: #7f8c8d;
+            }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #3498db;
+            border: 2px solid #3498db;
+            margin-bottom: 15px;
+        }
+
+            .btn-outline:hover {
+                background-color: #ebf5fb;
+            }
+
+        .btn-word {
+            background-color: #2b579a;
+            color: white;
+            border: 1px solid #1e3f6f;
+            margin-bottom: 10px;
+        }
+
+            .btn-word:hover {
+                background-color: #1e3f6f;
+            }
+
+        .btn-pdf {
+            background-color: #e74c3c;
+            color: white;
+            border: 1px solid #c0392b;
+            margin-bottom: 10px;
+        }
+
+            .btn-pdf:hover {
+                background-color: #c0392b;
+            }
+
+        .btn-save {
+            background-color: #f39c12;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .threats-scroll-area {
+            max-height: 55vh;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            font-size: 1.1em;
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+            .category-title:first-child {
+                margin-top: 0;
+            }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .threat-card {
+            background: #fff;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .threat-card:hover {
+                border-color: #bdc3c7;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            }
+
+            .threat-card.selected {
+                border-color: #2ecc71;
+                background-color: #f0fdf4;
+                box-shadow: 0 4px 10px rgba(46, 204, 113, 0.15);
+            }
+
+                .threat-card.selected::after {
+                    content: "✓";
+                    position: absolute;
+                    top: 10px;
+                    left: 10px;
+                    color: #2ecc71;
+                    font-size: 20px;
+                    font-weight: bold;
+                }
+
+        .card-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .card-text {
+            font-size: 14px;
+            color: #34495e;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .threat-id-label {
+            font-family: monospace;
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 5px;
+            display: inline-block;
+            color: #333;
+        }
 
         /* =========================================
            2. עיצוב המודל והאשף (Wizard)
         ========================================= */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; width: 750px; max-width: 95%; height: 85vh; border-radius: 12px; padding: 0; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(0,0,0,0.3); overflow: hidden; }
-        
-        .wizard-header { background: #f8f9fa; padding: 20px 30px; border-bottom: 1px solid #e0e6ed; }
-        .wizard-title { margin: 0 0 15px 0; color: #1a73e8; font-size: 1.2em; font-weight: bold; }
-        .wizard-steps-indicator { display: flex; justify-content: space-between; position: relative; }
-        .wizard-steps-indicator::before { content: ''; position: absolute; top: 12px; left: 30px; right: 30px; height: 3px; background: #e0e6ed; z-index: 1; }
-        .step-dot { position: relative; z-index: 2; background: white; border: 3px solid #e0e6ed; color: #7f8c8d; width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 14px; }
-        .step-label { position: absolute; top: 35px; white-space: nowrap; font-size: 12px; color: #7f8c8d; font-weight: bold; transform: translateX(50%); right: 50%; }
-        .step-dot.active { border-color: #3498db; background: #3498db; color: white; }
-        .step-dot.active .step-label { color: #3498db; }
-        .step-dot.completed { border-color: #2ecc71; background: #2ecc71; color: white; }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
 
-        .modal-body { padding: 30px; overflow-y: auto; flex-grow: 1; }
-        .wizard-step-content { display: none; animation: fadeIn 0.3s; }
-        .wizard-step-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-content {
+            background: white;
+            width: 750px;
+            max-width: 95%;
+            height: 85vh;
+            border-radius: 12px;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
 
-        .wizard-footer { padding: 15px 30px; border-top: 1px solid #e0e6ed; background: #fff; display: flex; justify-content: space-between; gap: 15px; }
-        .wizard-footer button { width: auto; min-width: 120px; }
+        .wizard-header {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e6ed;
+        }
 
-        .risk-section { background: #fff; border: 2px solid #e0e6ed; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .risk-title { font-weight: bold; color: #2c3e50; font-size: 1.1em; margin-bottom: 15px; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px; }
-        .risk-controls { display: flex; gap: 20px; align-items: flex-end; }
-        .risk-control-group { flex: 1; }
-        .risk-control-group label { font-size: 14px; color: #34495e; font-weight: bold; display: block; margin-bottom: 5px; }
-        .risk-result { flex: 1; text-align: center; background: #f8f9fa; border-radius: 8px; padding: 15px; border: 1px solid #e0e6ed; }
-        .risk-result span { font-size: 13px; color: #7f8c8d; display: block; margin-bottom: 5px; font-weight: bold; }
-        
-        .badge-risk { display: inline-block; padding: 8px 20px; border-radius: 20px; font-weight: bold; color: white; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .bg-very-low { background-color: #92d050; color: #000; } 
-        .bg-low { background-color: #00b050; } 
-        .bg-medium { background-color: #ffff00; color: #000; } 
-        .bg-high { background-color: #ff0000; } 
-        .bg-critical { background-color: #c00000; } 
-        .bg-none { background-color: #bdc3c7; color: #333; box-shadow: none; } 
+        .wizard-title {
+            margin: 0 0 15px 0;
+            color: #1a73e8;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
 
-        .req-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .req-item { display: flex; align-items: flex-start; gap: 12px; background: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #e9ecef; cursor: pointer; transition: background 0.2s; margin-bottom: 10px; }
-        .req-item:hover { background: #eef2f5; }
-        .req-item input { margin-top: 4px; transform: scale(1.2); flex-shrink: 0; }
-        .req-id-badge { background-color: #2c3e50; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: monospace; font-weight: bold; flex-shrink: 0; margin-top: 2px; }
-        .req-text-content { flex-grow: 1; white-space: pre-line; line-height: 1.5; font-size: 14px; color: #333; }
-        
-        .category-group { border: 1px solid #d1d8e0; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
-        .category-header { background: #f1f2f6; padding: 12px 15px; cursor: pointer; font-weight: bold; color: #2f3640; display: flex; justify-content: space-between; align-items: center; user-select: none; }
-        .category-content { padding: 15px; background: white; display: none; border-top: 1px solid #d1d8e0; }
-        .category-content.open { display: block; }
-        
-        .custom-req-area { display: flex; gap: 10px; margin-top: 15px; background: #eafaf1; padding: 15px; border-radius: 8px; border: 1px solid #c3e6cb; }
+        .wizard-steps-indicator {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+            .wizard-steps-indicator::before {
+                content: '';
+                position: absolute;
+                top: 12px;
+                left: 30px;
+                right: 30px;
+                height: 3px;
+                background: #e0e6ed;
+                z-index: 1;
+            }
+
+        .step-dot {
+            position: relative;
+            z-index: 2;
+            background: white;
+            border: 3px solid #e0e6ed;
+            color: #7f8c8d;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .step-label {
+            position: absolute;
+            top: 35px;
+            white-space: nowrap;
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: bold;
+            transform: translateX(50%);
+            right: 50%;
+        }
+
+        .step-dot.active {
+            border-color: #3498db;
+            background: #3498db;
+            color: white;
+        }
+
+            .step-dot.active .step-label {
+                color: #3498db;
+            }
+
+        .step-dot.completed {
+            border-color: #2ecc71;
+            background: #2ecc71;
+            color: white;
+        }
+
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .wizard-step-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+            .wizard-step-content.active {
+                display: block;
+            }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .wizard-footer {
+            padding: 15px 30px;
+            border-top: 1px solid #e0e6ed;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+            .wizard-footer button {
+                width: auto;
+                min-width: 120px;
+            }
+
+        .risk-section {
+            background: #fff;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .risk-title {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f1f2f6;
+            padding-bottom: 10px;
+        }
+
+        .risk-controls {
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+        }
+
+        .risk-control-group {
+            flex: 1;
+        }
+
+            .risk-control-group label {
+                font-size: 14px;
+                color: #34495e;
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+            }
+
+        .risk-result {
+            flex: 1;
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e0e6ed;
+        }
+
+            .risk-result span {
+                font-size: 13px;
+                color: #7f8c8d;
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+        .badge-risk {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .bg-very-low {
+            background-color: #92d050;
+            color: #000;
+        }
+
+        .bg-low {
+            background-color: #00b050;
+        }
+
+        .bg-medium {
+            background-color: #ffff00;
+            color: #000;
+        }
+
+        .bg-high {
+            background-color: #ff0000;
+        }
+
+        .bg-critical {
+            background-color: #c00000;
+        }
+
+        .bg-none {
+            background-color: #bdc3c7;
+            color: #333;
+            box-shadow: none;
+        }
+
+        .req-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .req-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 10px;
+        }
+
+            .req-item:hover {
+                background: #eef2f5;
+            }
+
+            .req-item input {
+                margin-top: 4px;
+                transform: scale(1.2);
+                flex-shrink: 0;
+            }
+
+        .req-id-badge {
+            background-color: #2c3e50;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: monospace;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .req-text-content {
+            flex-grow: 1;
+            white-space: pre-line;
+            line-height: 1.5;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .category-group {
+            border: 1px solid #d1d8e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .category-header {
+            background: #f1f2f6;
+            padding: 12px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #2f3640;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .category-content {
+            padding: 15px;
+            background: white;
+            display: none;
+            border-top: 1px solid #d1d8e0;
+        }
+
+            .category-content.open {
+                display: block;
+            }
+
+        .custom-req-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            background: #eafaf1;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+        }
 
         /* =========================================
            3. עיצוב המסמך להדפסה (PDF)
         ========================================= */
         @media print {
-            body * { visibility: hidden; } 
-            #printArea, #printArea * { visibility: visible; } 
-            #printArea { position: absolute; left: 0; top: 0; width: 100%; direction: rtl; padding: 0; margin: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; color: #000; background: white; }
-            @page { size: A4; margin: 15mm; } 
+            body * {
+                visibility: hidden;
+            }
+
+            #printArea, #printArea * {
+                visibility: visible;
+            }
+
+            #printArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                direction: rtl;
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+                color: #000;
+                background: white;
+            }
+
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
         }
     </style>
 </head>
@@ -124,7 +593,7 @@
         <label style="display:block; margin-bottom:10px; color:#34495e; font-weight:bold;">תן שם לפרויקט:</label>
         <input type="text" id="projectNameInput" placeholder="לדוגמה: פרויקט שדרוג תשתיות 2026...">
         <button onclick="goToStep2()">🚀 התחל לאפיין</button>
-        
+
         <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; border-top: 1px solid #eee; padding-top: 20px;">
             <button onclick="document.getElementById('importFile').click()" class="btn-outline" style="width: auto; margin:0;">📂 טען פרויקט קודם</button>
         </div>
@@ -134,30 +603,52 @@
         <h2>בחירת איומים מתוך הקטלוג</h2>
         <div id="displayProjectName" class="project-title"></div>
         <p style="text-align:center; color:#7f8c8d; margin-bottom:15px;">לחץ על איום כדי לנתח ולהתאים לו דרישות:</p>
-        
+
         <div id="threatsContainer" class="threats-scroll-area"></div>
 
         <div style="display:flex; gap:15px; margin-top: 20px;">
             <button onclick="goToStep1()" class="btn-secondary">חזור אחורה</button>
             <button onclick="openReportModal()" style="background-color: #2ecc71;">📄 הפקת דוחות רשמיים</button>
         </div>
-        
+
         <div style="display:flex; gap:15px; margin-top: 10px;">
             <button onclick="exportProject()" class="btn-save">💾 גיבוי עבודה לקובץ</button>
         </div>
     </div>
 
     <div id="reportSettingsModal" class="modal-overlay hidden">
-        <div class="modal-content" style="width: 650px; height: auto;">
+        <div class="modal-content" style="width: 700px; height: auto;">
             <div class="wizard-header" style="border-radius: 12px 12px 0 0;">
-                <h3 style="margin:0; color:#1a73e8;">הגדרות הפקת מסמך (תבנית ממשלתית)</h3>
+                <h3 style="margin:0; color:#1a73e8;">הגדרות כותרת עליונה (חלקים מהירים)</h3>
             </div>
             <div class="modal-body" style="padding: 25px;">
-                
+
                 <div style="display:flex; gap:15px; margin-bottom:15px;">
                     <div style="flex:1;">
-                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">סימוכין (יופיע למעלה ולמטה):</label>
+                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">ארגון / יחידה:</label>
+                        <input type="text" id="reportOrg" value="מטה הסייבר הארצי">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">סימוכין:</label>
                         <input type="text" id="reportReference" placeholder="לדוגמה: ד/ס 061">
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:15px; margin-bottom:15px;">
+                    <div style="flex:1;">
+                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">תאריך עברי:</label>
+                        <input type="text" id="reportHebDate" value="א' בניסן התשפ&quot;ו">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">תאריך לועזי:</label>
+                        <input type="text" id="reportGregDate">
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:15px; margin-bottom:20px; border-top: 1px solid #eee; padding-top: 15px;">
+                    <div style="flex:1;">
+                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">שם המחבר:</label>
+                        <input type="text" id="reportAuthor" placeholder="שם מלא">
                     </div>
                     <div style="flex:1;">
                         <label style="font-weight: bold; margin-bottom: 5px; display: block;">סיווג המסמך:</label>
@@ -170,22 +661,8 @@
                     </div>
                 </div>
 
-                <div style="display:flex; gap:15px;">
-                    <div style="flex:1;">
-                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">שם מחבר האפיון:</label>
-                        <input type="text" id="reportAuthor" placeholder="לדוגמה: יהודה אלי">
-                        <input type="text" id="reportAuthorTitle" value="יועץ הגנה בסייבר" style="margin-top:5px;">
-                    </div>
-                </div>
-
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e0e6ed;">
-                    <input type="checkbox" id="showReqIds" checked style="transform: scale(1.3); margin: 0;">
-                    <strong>הצג קוד מזהה (REQ-ID) בטבלאות המסמך</strong>
-                </label>
-                
-                <h4 style="margin-bottom: 10px; color:#2c3e50; border-top: 1px solid #eee; padding-top: 15px;">בחר אילו מסמכים להפיק:</h4>
                 <div style="display:flex; flex-direction: column; gap:0px;">
-                    <button onclick="executeDocumentGeneration('word')" class="btn-word">📝 Word - דוח אפיון מלא (עיצוב מוסדי מלא)</button>
+                    <button onclick="executeDocumentGeneration('word')" class="btn-word">📝 Word - הפק מסמך רשמי עם Quick Parts</button>
                     <button onclick="executeDocumentGeneration('pdf')" class="btn-pdf">📄 PDF - דוח הדפסה</button>
                 </div>
             </div>
@@ -207,7 +684,7 @@
             </div>
 
             <div class="modal-body">
-                
+
                 <div id="wizardStep1" class="wizard-step-content active">
                     <div class="risk-section">
                         <div class="risk-title">🔴 שלב 1: הערכת סיכון בסיסי (לפני הגנה)</div>
@@ -241,10 +718,7 @@
 
                 <div id="wizardStep2" class="wizard-step-content">
                     <h3 style="margin-top:0; color:#2c3e50;">🛡️ שלב 2: בחירת מענה - דרישות אבטחת מידע</h3>
-                    <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 15px;">סמן את הדרישות הנדרשות על מנת להוריד את הסבירות למימוש האיום.</p>
-                    
                     <div id="allReqsContainer"></div>
-                    
                     <div class="custom-req-area">
                         <input type="text" id="customReqInput" placeholder="הקלד דרישה ייעודית שחסרה בקטלוג...">
                         <button onclick="addCustomReq()" style="background-color:#27ae60;">+ הוסף</button>
@@ -285,7 +759,7 @@
                 </div>
 
             </div>
-            
+
             <div class="wizard-footer">
                 <button id="wizBtnPrev" onclick="navigateWizard(-1)" class="btn-secondary" style="visibility: hidden;">חזור</button>
                 <div style="display:flex; gap:10px;">
@@ -297,636 +771,692 @@
         </div>
     </div>
 
-<script>
-    const categorizedRequirements = {
-        "1. בקרת גישה והזדהות": [
-            { id: "R1", text: "הטמעת הזדהות רב-שלבית (MFA) לכלל המשתמשים מחוץ לרשת." },
-            { id: "R2", text: "הגבלת הרשאות גישה (Least Privilege) למערכות הליבה." }
-        ],
-        "2. הגנת נתונים": [
-            { id: "R3", text: "הצפנת נתונים במנוחה (Data at Rest) באלגוריתם AES-256." },
-            { id: "R4", text: "ביצוע גיבויים מנותקים תקופתיים ושמירתם בכספת." }
-        ],
-        "3. תקשורת ורשת": [
-            { id: "R5", text: "הצפנת נתונים בתעבורה בשימוש בפרוטוקול TLS 1.2 ומעלה." },
-            { id: "R6", text: `כלל הפורטים החיצוניים יהיו סגורים למעט:\n8080\n2029` }
-        ]
-    };
-
-    const threatToReqMapping = {
-        "חדירה למערכת מרחוק עקב פרצות": ["R1", "R5"],
-        "דלף מידע מתחנת עבודה": ["R2", "R3", "R6"],
-        "מתקפת כופרה (Ransomware)": ["R1", "R2", "R4"]
-    };
-
-    const categorizedThreats = {
-        "איומי רשת וחדירה": [
-            { name: "חדירה למערכת מרחוק עקב פרצות", icon: "🌐" },
-            { name: "מתקפת מניעת שירות (DDoS)", icon: "🛑" }
-        ],
-        "איומי מידע ומשתמשים": [
-            { name: "דלף מידע מתחנת עבודה", icon: "🔓" },
-            { name: "מתקפת כופרה (Ransomware)", icon: "💀" }
-        ]
-    };
-
-    function escapeHTML(str) {
-        if (!str) return "";
-        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
-    const reqDB = {}; 
-    const allReqIds = []; 
-    const threatIdMap = {}; 
-    let customReqCounter = 1; 
-    
-    for (const [category, reqs] of Object.entries(categorizedRequirements)) {
-        reqs.forEach(req => {
-            reqDB[req.id] = { category: category, text: req.text };
-            allReqIds.push(req.id);
+    <script>
+        // הזרקת תאריך לועזי אוטומטית בהפעלה
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById('reportGregDate').value = new Date().toLocaleDateString('he-IL');
         });
-    }
 
-    let threatCounter = 1;
-    for (const [category, threats] of Object.entries(categorizedThreats)) {
-        threats.forEach(t => {
-            threatIdMap[t.name] = `S${threatCounter}`;
-            threatCounter++;
-        });
-    }
-
-    let projectData = {}; 
-    let currentEditingThreat = "";
-    let currentWizardStep = 1;
-
-    function calculateSeverity(likelihood, impact) {
-        if (!likelihood || !impact) return { text: "טרם נקבע", class: "bg-none", inline: "" };
-        const matrix = {
-            "נמוכה": { "נמוכה": "נמוכה ביותר", "בינונית": "נמוכה", "גבוהה": "בינונית" },
-            "בינונית": { "נמוכה": "נמוכה", "בינונית": "בינונית", "גבוהה": "גבוהה" },
-            "גבוהה": { "נמוכה": "בינונית", "בינונית": "גבוהה", "גבוהה": "קריטית" }
+        const categorizedRequirements = {
+            "1. בקרת גישה והזדהות": [
+                { id: "R1", text: "הטמעת הזדהות רב-שלבית (MFA) לכלל המשתמשים מחוץ לרשת." },
+                { id: "R2", text: "הגבלת הרשאות גישה (Least Privilege) למערכות הליבה." }
+            ],
+            "2. הגנת נתונים": [
+                { id: "R3", text: "הצפנת נתונים במנוחה (Data at Rest) באלגוריתם AES-256." },
+                { id: "R4", text: "ביצוע גיבויים מנותקים תקופתיים ושמירתם בכספת." }
+            ],
+            "3. תקשורת ורשת": [
+                { id: "R5", text: "הצפנת נתונים בתעבורה בשימוש בפרוטוקול TLS 1.2 ומעלה." },
+                { id: "R6", text: `כלל הפורטים החיצוניים יהיו סגורים למעט:\n8080\n2029` }
+            ]
         };
-        const result = matrix[likelihood][impact];
-        let colorClass = "bg-none";
-        if (result === "נמוכה ביותר") colorClass = "bg-very-low";
-        else if (result === "נמוכה") colorClass = "bg-low";
-        else if (result === "בינונית") colorClass = "bg-medium";
-        else if (result === "גבוהה") colorClass = "bg-high";
-        else if (result === "קריטית") colorClass = "bg-critical";
-        return { text: result, class: colorClass };
-    }
 
-    function updateWizardRisk() {
-        const inL = document.getElementById('inherentLikelihood').value;
-        const inI = document.getElementById('inherentImpact').value;
-        const inRes = calculateSeverity(inL, inI);
-        
-        const inBadge = document.getElementById('inherentBadge');
-        inBadge.innerText = inRes.text;
-        inBadge.className = `badge-risk ${inRes.class}`;
+        const threatToReqMapping = {
+            "חדירה למערכת מרחוק עקב פרצות": ["R1", "R5"],
+            "דלף מידע מתחנת עבודה": ["R2", "R3", "R6"],
+            "מתקפת כופרה (Ransomware)": ["R1", "R2", "R4"]
+        };
 
-        const resImpactSelect = document.getElementById('residualImpact');
-        resImpactSelect.value = inI; 
+        const categorizedThreats = {
+            "איומי רשת וחדירה": [
+                { name: "חדירה למערכת מרחוק עקב פרצות", icon: "🌐" },
+                { name: "מתקפת מניעת שירות (DDoS)", icon: "🛑" }
+            ],
+            "איומי מידע ומשתמשים": [
+                { name: "דלף מידע מתחנת עבודה", icon: "🔓" },
+                { name: "מתקפת כופרה (Ransomware)", icon: "💀" }
+            ]
+        };
 
-        const resL = document.getElementById('residualLikelihood').value;
-        const resI = resImpactSelect.value;
-        const resRes = calculateSeverity(resL, resI);
-        
-        const resBadge = document.getElementById('residualBadge');
-        resBadge.innerText = resRes.text;
-        resBadge.className = `badge-risk ${resRes.class}`;
-    }
+        function escapeHTML(str) {
+            if (!str) return "";
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
 
-    function generateReqHTML(id, isChecked) {
-        let reqData = reqDB[id];
-        let checkedStr = isChecked ? "checked" : "";
-        let safeId = escapeHTML(id);
-        return `
-            <label class="req-item">
-                <input type="checkbox" value="${safeId}" class="req-checkbox" ${checkedStr}>
-                <span class="req-id-badge">${safeId}</span>
-                <span class="req-text-content">${escapeHTML(reqData.text)}</span>
-            </label>
-        `;
-    }
-
-    function openModal(threatName) {
-        currentEditingThreat = threatName;
-        document.getElementById('wizardThreatTitle').innerText = `אפיון איום [${threatIdMap[threatName]}]: ${threatName}`;
-        
-        const currentData = projectData[threatName] || { reqs: [], inherent: {}, residual: {} };
-        const recommendedListIds = threatToReqMapping[threatName] || [];
-        const alreadySelectedIds = currentData.reqs;
-
-        document.getElementById('inherentLikelihood').value = currentData.inherent.likelihood || "";
-        document.getElementById('inherentImpact').value = currentData.inherent.impact || "";
-        document.getElementById('residualLikelihood').value = currentData.residual.likelihood || "";
-        updateWizardRisk();
-
-        const container = document.getElementById('allReqsContainer');
-        container.innerHTML = '';
-        document.getElementById('customReqInput').value = '';
-
-        let recommendedHtml = '';
-        allReqIds.forEach(id => {
-            if (recommendedListIds.includes(id)) {
-                let isChecked = alreadySelectedIds.includes(id) || (!projectData[threatName] && currentData.reqs.length === 0);
-                recommendedHtml += generateReqHTML(id, isChecked);
-            }
-        });
-
-        alreadySelectedIds.forEach(id => {
-            if (id.startsWith('C') && reqDB[id]) {
-                recommendedHtml += generateReqHTML(id, true);
-            }
-        });
-
-        let catHtml = `
-        <div class="category-group" style="border-color: #2ecc71;">
-            <div class="category-header" style="background:#eafaf1; color:#27ae60;" onclick="this.parentElement.querySelector('.category-content').classList.toggle('open')">
-                <span>📁 דרישות מומלצות לאיום זה</span>
-            </div>
-            <div class="category-content open" id="recommendedFolderBox">
-                ${recommendedHtml || '<p style="color:gray; font-size:14px; margin:0;">אין דרישות מוגדרות מראש.</p>'}
-            </div>
-        </div>`;
-        container.innerHTML += catHtml;
+        const reqDB = {};
+        const allReqIds = [];
+        const threatIdMap = {};
+        let customReqCounter = 1;
 
         for (const [category, reqs] of Object.entries(categorizedRequirements)) {
-            let nonRecommendedReqs = reqs.filter(req => !recommendedListIds.includes(req.id));
-            if (nonRecommendedReqs.length > 0) {
-                let catFolder = `<div class="category-group"><div class="category-header" onclick="this.parentElement.querySelector('.category-content').classList.toggle('open')"><span>📁 ${category}</span></div><div class="category-content">`;
-                nonRecommendedReqs.forEach(req => {
-                    let isChecked = alreadySelectedIds.includes(req.id);
-                    catFolder += generateReqHTML(req.id, isChecked);
-                });
-                catFolder += `</div></div>`;
-                container.innerHTML += catFolder;
-            }
+            reqs.forEach(req => {
+                reqDB[req.id] = { category: category, text: req.text };
+                allReqIds.push(req.id);
+            });
         }
 
-        currentWizardStep = 1;
-        updateWizardUI();
-        document.getElementById('threatWizardModal').classList.remove('hidden');
-    }
-
-    function updateWizardUI() {
-        document.getElementById('wizardStep1').classList.remove('active');
-        document.getElementById('wizardStep2').classList.remove('active');
-        document.getElementById('wizardStep3').classList.remove('active');
-        document.getElementById(`wizardStep${currentWizardStep}`).classList.add('active');
-
-        for(let i=1; i<=3; i++) {
-            let dot = document.getElementById(`dot${i}`);
-            dot.classList.remove('active', 'completed');
-            if (i < currentWizardStep) dot.classList.add('completed');
-            if (i === currentWizardStep) dot.classList.add('active');
+        let threatCounter = 1;
+        for (const [category, threats] of Object.entries(categorizedThreats)) {
+            threats.forEach(t => {
+                threatIdMap[t.name] = `S${threatCounter}`;
+                threatCounter++;
+            });
         }
 
-        const btnPrev = document.getElementById('wizBtnPrev');
-        const btnNext = document.getElementById('wizBtnNext');
-        const btnSave = document.getElementById('wizBtnSave');
+        let projectData = {};
+        let currentEditingThreat = "";
+        let currentWizardStep = 1;
 
-        btnPrev.style.visibility = currentWizardStep === 1 ? 'hidden' : 'visible';
-        
-        if (currentWizardStep === 3) {
-            btnNext.style.display = 'none';
-            btnSave.style.display = 'block';
-        } else {
-            btnNext.style.display = 'block';
-            btnSave.style.display = 'none';
+        function calculateSeverity(likelihood, impact) {
+            if (!likelihood || !impact) return { text: "טרם נקבע", class: "bg-none", inline: "" };
+            const matrix = {
+                "נמוכה": { "נמוכה": "נמוכה ביותר", "בינונית": "נמוכה", "גבוהה": "בינונית" },
+                "בינונית": { "נמוכה": "נמוכה", "בינונית": "בינונית", "גבוהה": "גבוהה" },
+                "גבוהה": { "נמוכה": "בינונית", "בינונית": "גבוהה", "גבוהה": "קריטית" }
+            };
+            const result = matrix[likelihood][impact];
+            let colorClass = "bg-none";
+            if (result === "נמוכה ביותר") colorClass = "bg-very-low";
+            else if (result === "נמוכה") colorClass = "bg-low";
+            else if (result === "בינונית") colorClass = "bg-medium";
+            else if (result === "גבוהה") colorClass = "bg-high";
+            else if (result === "קריטית") colorClass = "bg-critical";
+            return { text: result, class: colorClass };
         }
-    }
 
-    function navigateWizard(direction) {
-        if (currentWizardStep === 1 && direction === 1) {
+        function updateWizardRisk() {
             const inL = document.getElementById('inherentLikelihood').value;
             const inI = document.getElementById('inherentImpact').value;
-            if (!inL || !inI) {
-                alert("אנא בחר סבירות והשפעה לסיכון הבסיסי לפני שממשיכים.");
+            const inRes = calculateSeverity(inL, inI);
+
+            const inBadge = document.getElementById('inherentBadge');
+            inBadge.innerText = inRes.text;
+            inBadge.className = `badge-risk ${inRes.class}`;
+
+            const resImpactSelect = document.getElementById('residualImpact');
+            resImpactSelect.value = inI;
+
+            const resL = document.getElementById('residualLikelihood').value;
+            const resI = resImpactSelect.value;
+            const resRes = calculateSeverity(resL, resI);
+
+            const resBadge = document.getElementById('residualBadge');
+            resBadge.innerText = resRes.text;
+            resBadge.className = `badge-risk ${resRes.class}`;
+        }
+
+        function generateReqHTML(id, isChecked) {
+            let reqData = reqDB[id];
+            let checkedStr = isChecked ? "checked" : "";
+            let safeId = escapeHTML(id);
+            return `
+                <label class="req-item">
+                    <input type="checkbox" value="${safeId}" class="req-checkbox" ${checkedStr}>
+                    <span class="req-id-badge">${safeId}</span>
+                    <span class="req-text-content">${escapeHTML(reqData.text)}</span>
+                </label>
+            `;
+        }
+
+        function openModal(threatName) {
+            currentEditingThreat = threatName;
+            document.getElementById('wizardThreatTitle').innerText = `אפיון איום [${threatIdMap[threatName]}]: ${threatName}`;
+
+            const currentData = projectData[threatName] || { reqs: [], inherent: {}, residual: {} };
+            const recommendedListIds = threatToReqMapping[threatName] || [];
+            const alreadySelectedIds = currentData.reqs;
+
+            document.getElementById('inherentLikelihood').value = currentData.inherent.likelihood || "";
+            document.getElementById('inherentImpact').value = currentData.inherent.impact || "";
+            document.getElementById('residualLikelihood').value = currentData.residual.likelihood || "";
+            updateWizardRisk();
+
+            const container = document.getElementById('allReqsContainer');
+            container.innerHTML = '';
+            document.getElementById('customReqInput').value = '';
+
+            let recommendedHtml = '';
+            allReqIds.forEach(id => {
+                if (recommendedListIds.includes(id)) {
+                    let isChecked = alreadySelectedIds.includes(id) || (!projectData[threatName] && currentData.reqs.length === 0);
+                    recommendedHtml += generateReqHTML(id, isChecked);
+                }
+            });
+
+            alreadySelectedIds.forEach(id => {
+                if (id.startsWith('C') && reqDB[id]) {
+                    recommendedHtml += generateReqHTML(id, true);
+                }
+            });
+
+            let catHtml = `
+            <div class="category-group" style="border-color: #2ecc71;">
+                <div class="category-header" style="background:#eafaf1; color:#27ae60;" onclick="this.parentElement.querySelector('.category-content').classList.toggle('open')">
+                    <span>📁 דרישות מומלצות לאיום זה</span>
+                </div>
+                <div class="category-content open" id="recommendedFolderBox">
+                    ${recommendedHtml || '<p style="color:gray; font-size:14px; margin:0;">אין דרישות מוגדרות מראש.</p>'}
+                </div>
+            </div>`;
+            container.innerHTML += catHtml;
+
+            for (const [category, reqs] of Object.entries(categorizedRequirements)) {
+                let nonRecommendedReqs = reqs.filter(req => !recommendedListIds.includes(req.id));
+                if (nonRecommendedReqs.length > 0) {
+                    let catFolder = `<div class="category-group"><div class="category-header" onclick="this.parentElement.querySelector('.category-content').classList.toggle('open')"><span>📁 ${category}</span></div><div class="category-content">`;
+                    nonRecommendedReqs.forEach(req => {
+                        let isChecked = alreadySelectedIds.includes(req.id);
+                        catFolder += generateReqHTML(req.id, isChecked);
+                    });
+                    catFolder += `</div></div>`;
+                    container.innerHTML += catFolder;
+                }
+            }
+
+            currentWizardStep = 1;
+            updateWizardUI();
+            document.getElementById('threatWizardModal').classList.remove('hidden');
+        }
+
+        function updateWizardUI() {
+            document.getElementById('wizardStep1').classList.remove('active');
+            document.getElementById('wizardStep2').classList.remove('active');
+            document.getElementById('wizardStep3').classList.remove('active');
+            document.getElementById(`wizardStep${currentWizardStep}`).classList.add('active');
+
+            for (let i = 1; i <= 3; i++) {
+                let dot = document.getElementById(`dot${i}`);
+                dot.classList.remove('active', 'completed');
+                if (i < currentWizardStep) dot.classList.add('completed');
+                if (i === currentWizardStep) dot.classList.add('active');
+            }
+
+            const btnPrev = document.getElementById('wizBtnPrev');
+            const btnNext = document.getElementById('wizBtnNext');
+            const btnSave = document.getElementById('wizBtnSave');
+
+            btnPrev.style.visibility = currentWizardStep === 1 ? 'hidden' : 'visible';
+
+            if (currentWizardStep === 3) {
+                btnNext.style.display = 'none';
+                btnSave.style.display = 'block';
+            } else {
+                btnNext.style.display = 'block';
+                btnSave.style.display = 'none';
+            }
+        }
+
+        function navigateWizard(direction) {
+            if (currentWizardStep === 1 && direction === 1) {
+                const inL = document.getElementById('inherentLikelihood').value;
+                const inI = document.getElementById('inherentImpact').value;
+                if (!inL || !inI) {
+                    alert("אנא בחר סבירות והשפעה לסיכון הבסיסי לפני שממשיכים.");
+                    return;
+                }
+                updateWizardRisk();
+            }
+            currentWizardStep += direction;
+            updateWizardUI();
+        }
+
+        function closeWizard() { document.getElementById('threatWizardModal').classList.add('hidden'); }
+
+        function addCustomReq() {
+            const input = document.getElementById('customReqInput');
+            const val = input.value.trim();
+            if (!val) return;
+            const customId = "C" + customReqCounter;
+            customReqCounter++;
+            reqDB[customId] = { category: "דרישה ייעודית", text: val };
+            const recFolder = document.getElementById('recommendedFolderBox');
+            if (recFolder) {
+                if (recFolder.innerHTML.includes('אין דרישות מוגדרות מראש')) recFolder.innerHTML = '';
+                recFolder.innerHTML += generateReqHTML(customId, true);
+            }
+            input.value = '';
+        }
+
+        function saveThreatWizard() {
+            const checkboxes = document.querySelectorAll('.req-checkbox:checked');
+            const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+            const inL = document.getElementById('inherentLikelihood').value;
+            const inI = document.getElementById('inherentImpact').value;
+            const resL = document.getElementById('residualLikelihood').value;
+            const resI = document.getElementById('residualImpact').value;
+
+            if (!resL) { alert("חובה להעריך את הסבירות השיורית לפני שמירת האפיון."); return; }
+
+            projectData[currentEditingThreat] = {
+                reqs: selectedIds,
+                inherent: { likelihood: inL, impact: inI, severity: calculateSeverity(inL, inI).text },
+                residual: { likelihood: resL, impact: resI, severity: calculateSeverity(resL, resI).text }
+            };
+
+            const cardId = 'card-' + currentEditingThreat.replace(/\s+/g, '-');
+            const card = document.getElementById(cardId);
+            if (selectedIds.length > 0) card.classList.add('selected');
+            else card.classList.remove('selected');
+            closeWizard();
+        }
+
+        function loadThreats() {
+            const container = document.getElementById('threatsContainer');
+            container.innerHTML = '';
+            for (const [categoryName, threats] of Object.entries(categorizedThreats)) {
+                let catTitle = document.createElement('div');
+                catTitle.className = 'category-title';
+                catTitle.innerText = categoryName;
+                container.appendChild(catTitle);
+
+                let grid = document.createElement('div');
+                grid.className = 'cards-grid';
+
+                threats.forEach(threat => {
+                    let card = document.createElement('div');
+                    card.className = 'threat-card';
+                    card.id = 'card-' + threat.name.replace(/\s+/g, '-');
+                    if (projectData[threat.name] && projectData[threat.name].reqs.length > 0) card.classList.add('selected');
+                    card.onclick = () => openModal(threat.name);
+                    card.innerHTML = `<span class="card-icon">${threat.icon}</span><span class="threat-id-label">${threatIdMap[threat.name]}</span><span class="card-text">${threat.name}</span>`;
+                    grid.appendChild(card);
+                });
+                container.appendChild(grid);
+            }
+        }
+
+        function goToStep2() {
+            const projectName = document.getElementById('projectNameInput').value.trim();
+            if (!projectName) { alert("נא להזין שם פרויקט."); return; }
+            document.getElementById('displayProjectName').innerText = `פרויקט: ${projectName}`;
+            loadThreats();
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
+        function goToStep1() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+        }
+
+        function exportProject() {
+            const projectName = document.getElementById('projectNameInput').value || "ללא_שם";
+            const customReqsToSave = {};
+            Object.keys(reqDB).forEach(id => { if (id.startsWith('C')) customReqsToSave[id] = reqDB[id]; });
+            const dataToSave = { projectName: projectName, data: projectData, customReqs: customReqsToSave };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToSave));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `אפיון_סייבר_${projectName}_גיבוי.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function importProject(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (importedData.data) {
+                        projectData = importedData.data;
+                        if (importedData.projectName) document.getElementById('projectNameInput').value = importedData.projectName;
+                        if (importedData.customReqs) {
+                            let maxC = customReqCounter;
+                            Object.keys(importedData.customReqs).forEach(id => {
+                                reqDB[id] = importedData.customReqs[id];
+                                let num = parseInt(id.substring(1));
+                                if (!isNaN(num) && num >= maxC) maxC = num + 1;
+                            });
+                            customReqCounter = maxC;
+                        }
+                        alert("✅ פרויקט סייבר נטען בהצלחה!");
+                        if (!document.getElementById('step2').classList.contains('hidden')) {
+                            document.getElementById('displayProjectName').innerText = `פרויקט: ${document.getElementById('projectNameInput').value}`;
+                            loadThreats();
+                        } else if (importedData.projectName) goToStep2();
+                    } else alert("❌ קובץ שמירה לא תקין.");
+                } catch (err) { alert("❌ שגיאה בקריאת הקובץ."); }
+                document.getElementById('importFile').value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function openReportModal() {
+            const activeThreats = Object.keys(projectData).filter(threat => projectData[threat].reqs.length > 0);
+            if (activeThreats.length === 0) { alert("לא איפיינת עדיין אף איום. לחץ על כרטיסיה כדי להתחיל."); return; }
+            document.getElementById('reportSettingsModal').classList.remove('hidden');
+        }
+
+        function closeReportModal() { document.getElementById('reportSettingsModal').classList.add('hidden'); }
+
+        // =========================================================
+        // ייצוא מוסדי לוורד - עיצוב מתקדם עם חלקים מהירים
+        // =========================================================
+
+        function createDocxFieldCell(instruction, fallbackText, bgColor = null, align = docx.AlignmentType.CENTER, isBold = false) {
+            return new docx.TableCell({
+                children: [
+                    new docx.Paragraph({
+                        children: [
+                            new docx.SimpleField(instruction, new docx.TextRun({ text: fallbackText, bold: isBold, font: "Arial", size: 22 }))
+                        ],
+                        alignment: align,
+                        bidirectional: true
+                    })
+                ],
+                shading: bgColor ? { fill: bgColor } : undefined,
+                verticalAlign: docx.VerticalAlign.CENTER,
+                margins: { top: 100, bottom: 100, left: 100, right: 100 }
+            });
+        }
+
+        function createDocxCell(text, bgColor = null, isBold = false, align = docx.AlignmentType.CENTER, textColor = "000000") {
+            return new docx.TableCell({
+                children: [
+                    new docx.Paragraph({
+                        children: [new docx.TextRun({ text: text || "-", bold: isBold, font: "Arial", size: 22, color: textColor })],
+                        alignment: align,
+                        bidirectional: true
+                    })
+                ],
+                shading: bgColor ? { fill: bgColor } : undefined,
+                verticalAlign: docx.VerticalAlign.CENTER,
+                margins: { top: 150, bottom: 150, left: 150, right: 150 }
+            });
+        }
+
+        function getDocxColor(severityText) {
+            if (severityText === "נמוכה ביותר") return "92D050";
+            if (severityText === "נמוכה") return "00B050";
+            if (severityText === "בינונית") return "FFFF00";
+            if (severityText === "גבוהה") return "FF0000";
+            if (severityText === "קריטית") return "C00000";
+            return "FFFFFF";
+        }
+
+        async function executeDocumentGeneration(docType) {
+            if (docType === 'pdf') {
+                alert("הדפסת PDF עובדת דרך לחצן ההדפסה של הדפדפן שלך.");
+                closeReportModal();
                 return;
             }
-            updateWizardRisk();
-        }
-        currentWizardStep += direction;
-        updateWizardUI();
-    }
 
-    function closeWizard() { document.getElementById('threatWizardModal').classList.add('hidden'); }
+            const projectName = document.getElementById('projectNameInput').value || "ללא שם";
+            const author = document.getElementById('reportAuthor').value || "לא צוין";
+            const classification = document.getElementById('reportClassification').value;
 
-    function addCustomReq() {
-        const input = document.getElementById('customReqInput');
-        const val = input.value.trim();
-        if (!val) return;
-        const customId = "C" + customReqCounter;
-        customReqCounter++;
-        reqDB[customId] = { category: "דרישה ייעודית", text: val };
-        const recFolder = document.getElementById('recommendedFolderBox');
-        if (recFolder) {
-            if (recFolder.innerHTML.includes('אין דרישות מוגדרות מראש')) recFolder.innerHTML = '';
-            recFolder.innerHTML += generateReqHTML(customId, true);
-        }
-        input.value = ''; 
-    }
+            const orgName = document.getElementById('reportOrg').value || "לא צוין";
+            const refName = document.getElementById('reportReference').value || "ללא";
+            const hebDate = document.getElementById('reportHebDate').value || "לא צוין";
+            const greDate = document.getElementById('reportGregDate').value || "לא צוין";
 
-    function saveThreatWizard() {
-        const checkboxes = document.querySelectorAll('.req-checkbox:checked');
-        const selectedIds = Array.from(checkboxes).map(cb => cb.value);
-        const inL = document.getElementById('inherentLikelihood').value;
-        const inI = document.getElementById('inherentImpact').value;
-        const resL = document.getElementById('residualLikelihood').value;
-        const resI = document.getElementById('residualImpact').value;
+            const activeThreats = Object.keys(projectData).filter(threat => projectData[threat].reqs.length > 0);
 
-        if (!resL) { alert("חובה להעריך את הסבירות השיורית לפני שמירת האפיון."); return; }
+            if (activeThreats.length === 0) {
+                alert("לא נבחרו איומים להדפסה!");
+                return;
+            }
 
-        projectData[currentEditingThreat] = {
-            reqs: selectedIds,
-            inherent: { likelihood: inL, impact: inI, severity: calculateSeverity(inL, inI).text },
-            residual: { likelihood: resL, impact: resI, severity: calculateSeverity(resL, resI).text }
-        };
-        
-        const cardId = 'card-' + currentEditingThreat.replace(/\s+/g, '-');
-        const card = document.getElementById(cardId);
-        if (selectedIds.length > 0) card.classList.add('selected');
-        else card.classList.remove('selected');
-        closeWizard();
-    }
+            const { Document, Packer, Paragraph, TextRun, AlignmentType, Table, TableRow, WidthType, BorderStyle, Header, Footer, PageNumber, HeadingLevel, SimpleField } = docx;
 
-    function loadThreats() {
-        const container = document.getElementById('threatsContainer');
-        container.innerHTML = ''; 
-        for (const [categoryName, threats] of Object.entries(categorizedThreats)) {
-            let catTitle = document.createElement('div');
-            catTitle.className = 'category-title';
-            catTitle.innerText = categoryName;
-            container.appendChild(catTitle);
+            const tableBorders = {
+                top: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
+                bottom: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
+                left: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
+                right: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
+                insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
+                insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "000000" }
+            };
 
-            let grid = document.createElement('div');
-            grid.className = 'cards-grid';
+            const noBorders = {
+                top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                insideHorizontal: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+                insideVertical: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
+            };
 
-            threats.forEach(threat => {
-                let card = document.createElement('div');
-                card.className = 'threat-card';
-                card.id = 'card-' + threat.name.replace(/\s+/g, '-');
-                if (projectData[threat.name] && projectData[threat.name].reqs.length > 0) card.classList.add('selected');
-                card.onclick = () => openModal(threat.name);
-                card.innerHTML = `<span class="card-icon">${threat.icon}</span><span class="threat-id-label">${threatIdMap[threat.name]}</span><span class="card-text">${threat.name}</span>`;
-                grid.appendChild(card);
-            });
-            container.appendChild(grid);
-        }
-    }
+            const docChildren = [];
 
-    function goToStep2() {
-        const projectName = document.getElementById('projectNameInput').value.trim();
-        if (!projectName) { alert("נא להזין שם פרויקט."); return; }
-        document.getElementById('displayProjectName').innerText = `פרויקט: ${projectName}`;
-        loadThreats();
-        document.getElementById('step1').classList.add('hidden');
-        document.getElementById('step2').classList.remove('hidden');
-    }
-
-    function goToStep1() {
-        document.getElementById('step2').classList.add('hidden');
-        document.getElementById('step1').classList.remove('hidden');
-    }
-
-    function exportProject() {
-        const projectName = document.getElementById('projectNameInput').value || "ללא_שם";
-        const customReqsToSave = {};
-        Object.keys(reqDB).forEach(id => { if (id.startsWith('C')) customReqsToSave[id] = reqDB[id]; });
-        const dataToSave = { projectName: projectName, data: projectData, customReqs: customReqsToSave };
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataToSave));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", `אפיון_סייבר_${projectName}_גיבוי.json`);
-        document.body.appendChild(downloadAnchorNode); 
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
-    }
-
-    function importProject(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const importedData = JSON.parse(e.target.result);
-                if (importedData.data) {
-                    projectData = importedData.data;
-                    if (importedData.projectName) document.getElementById('projectNameInput').value = importedData.projectName;
-                    if (importedData.customReqs) {
-                        let maxC = customReqCounter;
-                        Object.keys(importedData.customReqs).forEach(id => {
-                            reqDB[id] = importedData.customReqs[id];
-                            let num = parseInt(id.substring(1));
-                            if (!isNaN(num) && num >= maxC) maxC = num + 1;
-                        });
-                        customReqCounter = maxC;
-                    }
-                    alert("✅ פרויקט סייבר נטען בהצלחה!");
-                    if (!document.getElementById('step2').classList.contains('hidden')) {
-                        document.getElementById('displayProjectName').innerText = `פרויקט: ${document.getElementById('projectNameInput').value}`;
-                        loadThreats();
-                    } else if (importedData.projectName) goToStep2();
-                } else alert("❌ קובץ שמירה לא תקין.");
-            } catch (err) { alert("❌ שגיאה בקריאת הקובץ."); }
-            document.getElementById('importFile').value = '';
-        };
-        reader.readAsText(file);
-    }
-
-    function openReportModal() {
-        const activeThreats = Object.keys(projectData).filter(threat => projectData[threat].reqs.length > 0);
-        if (activeThreats.length === 0) { alert("לא איפיינת עדיין אף איום. לחץ על כרטיסיה כדי להתחיל."); return; }
-        document.getElementById('reportSettingsModal').classList.remove('hidden');
-    }
-
-    function closeReportModal() { document.getElementById('reportSettingsModal').classList.add('hidden'); }
-
-    // =========================================================
-    // ייצוא מוסדי לוורד - עיצוב מתקדם
-    // =========================================================
-
-    function createDocxCell(text, bgColor = null, isBold = false, align = docx.AlignmentType.CENTER, textColor = "000000") {
-        return new docx.TableCell({
-            children: [
-                new docx.Paragraph({
-                    children: [new docx.TextRun({ text: text || "-", bold: isBold, font: "Arial", size: 22, color: textColor })],
-                    alignment: align,
-                    bidirectional: true
-                })
-            ],
-            shading: bgColor ? { fill: bgColor } : undefined,
-            verticalAlign: docx.VerticalAlign.CENTER,
-            margins: { top: 150, bottom: 150, left: 150, right: 150 }
-        });
-    }
-
-    function getDocxColor(severityText) {
-        if(severityText === "נמוכה ביותר") return "92D050";
-        if(severityText === "נמוכה") return "00B050";
-        if(severityText === "בינונית") return "FFFF00";
-        if(severityText === "גבוהה") return "FF0000";
-        if(severityText === "קריטית") return "C00000";
-        return "FFFFFF";
-    }
-
-    async function executeDocumentGeneration(docType) {
-        if (docType === 'pdf') {
-            alert("הדפסת PDF עובדת דרך לחצן ההדפסה של הדפדפן שלך.");
-            closeReportModal();
-            return;
-        }
-
-        const projectName = document.getElementById('projectNameInput').value || "ללא שם";
-        const author = document.getElementById('reportAuthor').value || "לא צוין";
-        const reference = document.getElementById('reportReference').value || "ללא סימוכין";
-        const classification = document.getElementById('reportClassification').value;
-        const activeThreats = Object.keys(projectData).filter(threat => projectData[threat].reqs.length > 0);
-
-        const { Document, Packer, Paragraph, TextRun, AlignmentType, Table, TableRow, WidthType, BorderStyle, Header, Footer, PageNumber, HeadingLevel } = docx;
-
-        // הגדרת טבלה ללא גבולות (עבור הכותרות התחתונות והעליונות)
-        const noBorders = {
-            top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-            bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-            left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-            right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-            insideHorizontal: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-            insideVertical: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
-        };
-
-        const tableBorders = {
-            top: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
-            bottom: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
-            left: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
-            right: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
-            insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
-            insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "000000" }
-        };
-
-        const docChildren = [];
-        const currentDate = new Date().toLocaleDateString('he-IL');
-
-        // ==========================================
-        // עמוד שער מוסדי
-        // ==========================================
-        docChildren.push(new Paragraph({
-            children: [new TextRun({ text: "מסמך אפיון דרישות והערכת סיכוני סייבר", font: "Arial", size: 52, bold: true, color: "1F4E79" })],
-            alignment: AlignmentType.CENTER,
-            bidirectional: true,
-            spacing: { before: 2000, after: 400 }
-        }));
-
-        docChildren.push(new Paragraph({
-            children: [new TextRun({ text: `פרויקט: ${projectName}`, font: "Arial", size: 40, bold: true, color: "2E74B5" })],
-            alignment: AlignmentType.CENTER,
-            bidirectional: true,
-            spacing: { after: 1500 }
-        }));
-
-        docChildren.push(new Table({
-            width: { size: 70, type: WidthType.PERCENTAGE },
-            alignment: AlignmentType.CENTER,
-            borders: tableBorders,
-            rows: [
-                new TableRow({ children: [ createDocxCell("תאריך הפקה:", "F2F2F2", true, AlignmentType.RIGHT), createDocxCell(currentDate, null, false, AlignmentType.RIGHT) ] }),
-                new TableRow({ children: [ createDocxCell("שם המחבר:", "F2F2F2", true, AlignmentType.RIGHT), createDocxCell(author, null, false, AlignmentType.RIGHT) ] }),
-                new TableRow({ children: [ createDocxCell("סיווג:", "F2F2F2", true, AlignmentType.RIGHT), createDocxCell(classification, null, false, AlignmentType.RIGHT) ] }),
-                new TableRow({ children: [ createDocxCell("סימוכין:", "F2F2F2", true, AlignmentType.RIGHT), createDocxCell(reference, null, false, AlignmentType.RIGHT) ] }),
-            ]
-        }));
-
-        // מעבר עמוד אחרי השער
-        docChildren.push(new Paragraph({ text: "", pageBreakBefore: true }));
-
-        // ==========================================
-        // פרק 1: הערכת סיכונים
-        // ==========================================
-        docChildren.push(new Paragraph({
-            text: "1. ניתוח איומים והערכת סיכונים",
-            heading: HeadingLevel.HEADING_1,
-            alignment: AlignmentType.RIGHT,
-            bidirectional: true
-        }));
-
-        const threatRows = [
-            new TableRow({
-                children: [
-                    createDocxCell("מזהה", "D9E1F2", true),
-                    createDocxCell("תרחיש תקיפה (איום)", "D9E1F2", true),
-                    createDocxCell("השפעה", "D9E1F2", true),
-                    createDocxCell("סבירות", "D9E1F2", true),
-                    createDocxCell("חומרת סיכון (שורשי)", "D9E1F2", true)
-                ]
-            })
-        ];
-
-        activeThreats.forEach(threat => {
-            const tData = projectData[threat];
-            const severityColor = getDocxColor(tData.inherent.severity);
-            const fontColor = (severityColor === "C00000" || severityColor === "FF0000" || severityColor === "00B050") ? "FFFFFF" : "000000";
-            
-            threatRows.push(new TableRow({
-                children: [
-                    createDocxCell(threatIdMap[threat], null, true),
-                    createDocxCell(threat, null, false, AlignmentType.RIGHT),
-                    createDocxCell(tData.inherent.impact),
-                    createDocxCell(tData.inherent.likelihood),
-                    createDocxCell(tData.inherent.severity, severityColor, true, AlignmentType.CENTER, fontColor)
-                ]
+            docChildren.push(new Paragraph({
+                children: [new TextRun({ text: "דוח אפיון סייבר", font: "Arial", size: 52, bold: true, color: "1F4E79" })],
+                alignment: AlignmentType.CENTER, bidirectional: true, spacing: { before: 1000, after: 400 }
             }));
-        });
 
-        docChildren.push(new Table({ rows: threatRows, width: { size: 100, type: WidthType.PERCENTAGE }, borders: tableBorders }));
-        docChildren.push(new Paragraph({ text: "", spacing: { after: 600 } })); 
+            docChildren.push(new Paragraph({
+                children: [new TextRun({ text: projectName, font: "Arial", size: 40, bold: true, color: "2E74B5" })],
+                alignment: AlignmentType.CENTER, bidirectional: true, spacing: { after: 1000 }
+            }));
 
-        // ==========================================
-        // פרק 2: דרישות אבטחת מידע
-        // ==========================================
-        docChildren.push(new Paragraph({
-            text: "2. דרישות הגנה מפורטות",
-            heading: HeadingLevel.HEADING_1,
-            alignment: AlignmentType.RIGHT,
-            bidirectional: true
-        }));
+            docChildren.push(new Paragraph({ text: "", pageBreakBefore: true }));
 
-        const reqRows = [
-            new TableRow({
-                children: [
-                    createDocxCell("איום", "333F50", true, AlignmentType.CENTER, "FFFFFF"),
-                    createDocxCell("מזהה דרישה", "333F50", true, AlignmentType.CENTER, "FFFFFF"),
-                    createDocxCell("מהות הדרישה לביצוע", "333F50", true, AlignmentType.CENTER, "FFFFFF")
-                ]
-            })
-        ];
+            // ==========================================
+            // פרק 1: הערכת סיכונים
+            // ==========================================
+            docChildren.push(new Paragraph({
+                text: "1. ניתוח איומים והערכת סיכונים",
+                heading: HeadingLevel.HEADING_1,
+                alignment: AlignmentType.RIGHT, bidirectional: true
+            }));
 
-        activeThreats.forEach(threat => {
-            const tData = projectData[threat];
-            tData.reqs.forEach((id, index) => {
-                reqRows.push(new TableRow({
+            const threatRows = [
+                new TableRow({
                     children: [
-                        createDocxCell(index === 0 ? threat : "", index === 0 ? "F8F9FA" : null, true, AlignmentType.RIGHT),
-                        createDocxCell(id, null, true),
-                        createDocxCell(reqDB[id] ? reqDB[id].text : "דרישה חסרה", null, false, AlignmentType.RIGHT)
+                        createDocxCell("מזהה", "D9E1F2", true),
+                        createDocxCell("תרחיש תקיפה (איום)", "D9E1F2", true),
+                        createDocxCell("השפעה", "D9E1F2", true),
+                        createDocxCell("סבירות", "D9E1F2", true),
+                        createDocxCell("חומרת סיכון", "D9E1F2", true)
+                    ]
+                })
+            ];
+
+            activeThreats.forEach(threat => {
+                const tData = projectData[threat];
+                const severityColor = getDocxColor(tData.inherent.severity);
+                const fontColor = (severityColor === "C00000" || severityColor === "FF0000" || severityColor === "00B050") ? "FFFFFF" : "000000";
+                threatRows.push(new TableRow({
+                    children: [
+                        createDocxCell(threatIdMap[threat], null, true),
+                        createDocxCell(threat, null, false, AlignmentType.RIGHT),
+                        createDocxCell(tData.inherent.impact), createDocxCell(tData.inherent.likelihood),
+                        createDocxCell(tData.inherent.severity, severityColor, true, AlignmentType.CENTER, fontColor)
                     ]
                 }));
             });
-        });
+            docChildren.push(new Table({ rows: threatRows, width: { size: 100, type: WidthType.PERCENTAGE }, borders: tableBorders }));
+            docChildren.push(new Paragraph({ text: "", spacing: { after: 600 } }));
 
-        docChildren.push(new Table({ rows: reqRows, width: { size: 100, type: WidthType.PERCENTAGE }, borders: tableBorders }));
-        docChildren.push(new Paragraph({ text: "", spacing: { after: 600 } })); 
-        
-        // ==========================================
-        // פרק 3: סיכון שיורי
-        // ==========================================
-        docChildren.push(new Paragraph({
-            text: "3. סיכון שיורי לאחר בקרות",
-            heading: HeadingLevel.HEADING_1,
-            alignment: AlignmentType.RIGHT,
-            bidirectional: true
-        }));
-
-        const resRows = [
-            new TableRow({
-                children: [
-                    createDocxCell("איום", "D9E1F2", true),
-                    createDocxCell("סיכון מקורי", "D9E1F2", true),
-                    createDocxCell("סבירות חדשה", "D9E1F2", true),
-                    createDocxCell("סיכון שיורי", "D9E1F2", true)
-                ]
-            })
-        ];
-
-        activeThreats.forEach(threat => {
-            const tData = projectData[threat];
-            const originalColor = getDocxColor(tData.inherent.severity);
-            const originalFontColor = (originalColor === "C00000" || originalColor === "FF0000" || originalColor === "00B050") ? "FFFFFF" : "000000";
-            
-            const resColor = getDocxColor(tData.residual.severity);
-            const resFontColor = (resColor === "C00000" || resColor === "FF0000" || resColor === "00B050") ? "FFFFFF" : "000000";
-
-            resRows.push(new TableRow({
-                children: [
-                    createDocxCell(threat, null, false, AlignmentType.RIGHT),
-                    createDocxCell(tData.inherent.severity, originalColor, true, AlignmentType.CENTER, originalFontColor),
-                    createDocxCell(tData.residual.likelihood),
-                    createDocxCell(tData.residual.severity, resColor, true, AlignmentType.CENTER, resFontColor)
-                ]
+            // ==========================================
+            // פרק 2: דרישות אבטחת מידע
+            // ==========================================
+            docChildren.push(new Paragraph({
+                text: "2. דרישות הגנה מפורטות",
+                heading: HeadingLevel.HEADING_1,
+                alignment: AlignmentType.RIGHT,
+                bidirectional: true
             }));
-        });
 
-        docChildren.push(new Table({ rows: resRows, width: { size: 100, type: WidthType.PERCENTAGE }, borders: tableBorders }));
+            const reqRows = [
+                new TableRow({
+                    children: [
+                        createDocxCell("איום", "333F50", true, AlignmentType.CENTER, "FFFFFF"),
+                        createDocxCell("מזהה דרישה", "333F50", true, AlignmentType.CENTER, "FFFFFF"),
+                        createDocxCell("מהות הדרישה לביצוע", "333F50", true, AlignmentType.CENTER, "FFFFFF")
+                    ]
+                })
+            ];
 
-        // ==========================================
-        // הרכבת המסמך המלא
-        // ==========================================
-        const doc = new Document({
-            styles: {
-                paragraphStyles: [
-                    {
-                        id: "Heading1",
-                        name: "Heading 1",
-                        basedOn: "Normal",
-                        next: "Normal",
-                        quickFormat: true,
+            activeThreats.forEach(threat => {
+                const tData = projectData[threat];
+                tData.reqs.forEach((id, index) => {
+                    reqRows.push(new TableRow({
+                        children: [
+                            createDocxCell(index === 0 ? threat : "", index === 0 ? "F8F9FA" : null, true, AlignmentType.RIGHT),
+                            createDocxCell(id, null, true),
+                            createDocxCell(reqDB[id] ? reqDB[id].text : "דרישה חסרה", null, false, AlignmentType.RIGHT)
+                        ]
+                    }));
+                });
+            });
+
+            docChildren.push(new Table({ rows: reqRows, width: { size: 100, type: WidthType.PERCENTAGE }, borders: tableBorders }));
+            docChildren.push(new Paragraph({ text: "", spacing: { after: 600 } }));
+
+            // ==========================================
+            // פרק 3: סיכון שיורי
+            // ==========================================
+            docChildren.push(new Paragraph({
+                text: "3. סיכון שיורי לאחר בקרות",
+                heading: HeadingLevel.HEADING_1,
+                alignment: AlignmentType.RIGHT,
+                bidirectional: true
+            }));
+
+            const resRows = [
+                new TableRow({
+                    children: [
+                        createDocxCell("איום", "D9E1F2", true),
+                        createDocxCell("סיכון מקורי", "D9E1F2", true),
+                        createDocxCell("סבירות חדשה", "D9E1F2", true),
+                        createDocxCell("סיכון שיורי", "D9E1F2", true)
+                    ]
+                })
+            ];
+
+            activeThreats.forEach(threat => {
+                const tData = projectData[threat];
+                const originalColor = getDocxColor(tData.inherent.severity);
+                const originalFontColor = (originalColor === "C00000" || originalColor === "FF0000" || originalColor === "00B050") ? "FFFFFF" : "000000";
+
+                const resColor = getDocxColor(tData.residual.severity);
+                const resFontColor = (resColor === "C00000" || resColor === "FF0000" || resColor === "00B050") ? "FFFFFF" : "000000";
+
+                resRows.push(new TableRow({
+                    children: [
+                        createDocxCell(threat, null, false, AlignmentType.RIGHT),
+                        createDocxCell(tData.inherent.severity, originalColor, true, AlignmentType.CENTER, originalFontColor),
+                        createDocxCell(tData.residual.likelihood),
+                        createDocxCell(tData.residual.severity, resColor, true, AlignmentType.CENTER, resFontColor)
+                    ]
+                }));
+            });
+
+            docChildren.push(new Table({ rows: resRows, width: { size: 100, type: WidthType.PERCENTAGE }, borders: tableBorders }));
+
+            // ==========================================
+            // יצירת המסמך המלא עם כל ההגדרות
+            // ==========================================
+            const doc = new Document({
+                creator: author,
+                title: projectName,
+                company: orgName,
+                subject: refName,
+                category: hebDate,
+                keywords: greDate,
+
+                styles: {
+                    paragraphStyles: [{
+                        id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true,
                         run: { font: "Arial", size: 32, bold: true, color: "1F4E79" },
                         paragraph: { spacing: { before: 240, after: 120 }, bidirectional: true }
-                    }
-                ]
-            },
-            sections: [{
-                properties: {},
-                headers: {
-                    default: new Header({
-                        children: [
-                            new Paragraph({
-                                children: [new TextRun({ text: "כל המוסר תוכן מסמך זה כולו או מקצתו, לאדם שאינו מוסמך לכך, עובר עבירה חמורה.", color: "FFFFFF", bold: true, size: 20 })],
-                                alignment: AlignmentType.CENTER, bidirectional: true, shading: { type: "clear", fill: "C00000" }, spacing: { after: 100 }
-                            }),
-                            new Paragraph({
-                                children: [new TextRun({ text: `- ${classification} -`, bold: true, font: "Arial", size: 24 })],
-                                alignment: AlignmentType.CENTER, bidirectional: true
-                            })
-                        ]
-                    })
+                    }]
                 },
-                footers: {
-                    default: new Footer({
-                        children: [
-                            new Table({
-                                width: { size: 100, type: WidthType.PERCENTAGE },
-                                borders: noBorders,
-                                rows: [
-                                    new TableRow({
-                                        children: [
-                                            new docx.TableCell({ children: [new Paragraph({ children: [new TextRun({ text: `סימוכין: ${reference}`, font: "Arial", size: 20 })], alignment: AlignmentType.RIGHT, bidirectional: true })] }),
-                                            new docx.TableCell({ children: [new Paragraph({ children: [new TextRun({ text: `- ${classification} -`, bold: true, font: "Arial", size: 20 })], alignment: AlignmentType.CENTER, bidirectional: true })] }),
-                                            new docx.TableCell({ children: [new Paragraph({
-                                                children: [
-                                                    new TextRun({ text: "עמוד ", font: "Arial", size: 20 }),
-                                                    new TextRun({ children: [PageNumber.CURRENT], font: "Arial", size: 20 }),
-                                                    new TextRun({ text: " מתוך ", font: "Arial", size: 20 }),
-                                                    new TextRun({ children: [PageNumber.TOTAL_PAGES], font: "Arial", size: 20 })
-                                                ],
-                                                alignment: AlignmentType.LEFT, bidirectional: true
-                                            })] })
-                                        ]
-                                    })
-                                ]
-                            })
-                        ]
-                    })
-                },
-                children: docChildren
-            }]
-        });
+                sections: [{
+                    properties: {
+                        page: {
+                            margin: { top: 1500, right: 1000, bottom: 1500, left: 1000 }
+                        }
+                    },
+                    headers: {
+                        default: new Header({
+                            children: [
+                                new Table({
+                                    width: { size: 100, type: WidthType.PERCENTAGE },
+                                    borders: tableBorders,
+                                    rows: [
+                                        new TableRow({
+                                            children: [
+                                                new docx.TableCell({
+                                                    columnSpan: 3,
+                                                    shading: { fill: "F2F2F2" },
+                                                    margins: { top: 100, bottom: 100, left: 100, right: 100 },
+                                                    children: [new Paragraph({
+                                                        children: [
+                                                            new TextRun({ text: "ארגון: ", bold: true, font: "Arial", size: 24 }),
+                                                            new SimpleField(`DOCPROPERTY Company`, new TextRun({ text: orgName, font: "Arial", size: 24 }))
+                                                        ],
+                                                        alignment: AlignmentType.RIGHT, bidirectional: true
+                                                    })]
+                                                })
+                                            ]
+                                        }),
+                                        new TableRow({
+                                            children: [
+                                                new docx.TableCell({
+                                                    margins: { top: 100, bottom: 100, left: 100, right: 100 },
+                                                    children: [new Paragraph({
+                                                        children: [
+                                                            new TextRun({ text: "סימוכין: ", bold: true, font: "Arial", size: 20 }),
+                                                            new SimpleField("SUBJECT", new TextRun({ text: refName, font: "Arial", size: 20 }))
+                                                        ],
+                                                        alignment: AlignmentType.RIGHT, bidirectional: true
+                                                    })]
+                                                }),
+                                                new docx.TableCell({
+                                                    margins: { top: 100, bottom: 100, left: 100, right: 100 },
+                                                    children: [new Paragraph({
+                                                        children: [
+                                                            new TextRun({ text: "תאריך עברי: ", bold: true, font: "Arial", size: 20 }),
+                                                            new SimpleField("CATEGORY", new TextRun({ text: hebDate, font: "Arial", size: 20 }))
+                                                        ],
+                                                        alignment: AlignmentType.CENTER, bidirectional: true
+                                                    })]
+                                                }),
+                                                new docx.TableCell({
+                                                    margins: { top: 100, bottom: 100, left: 100, right: 100 },
+                                                    children: [new Paragraph({
+                                                        children: [
+                                                            new TextRun({ text: "תאריך לועזי: ", bold: true, font: "Arial", size: 20 }),
+                                                            new SimpleField("KEYWORDS", new TextRun({ text: greDate, font: "Arial", size: 20 }))
+                                                        ],
+                                                        alignment: AlignmentType.LEFT, bidirectional: true
+                                                    })]
+                                                })
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new Paragraph({ text: "", spacing: { after: 100 } }),
+                                new Paragraph({
+                                    children: [new TextRun({ text: "כל המוסר תוכן מסמך זה כולו או מקצתו, לאדם שאינו מוסמך לכך, עובר עבירה חמורה.", color: "FFFFFF", bold: true, size: 20 })],
+                                    alignment: AlignmentType.CENTER, bidirectional: true, shading: { type: "clear", fill: "C00000" }, spacing: { after: 100 }
+                                }),
+                                new Paragraph({
+                                    children: [new TextRun({ text: `- ${classification} -`, bold: true, font: "Arial", size: 24 })],
+                                    alignment: AlignmentType.CENTER, bidirectional: true
+                                })
+                            ]
+                        })
+                    },
+                    footers: {
+                        default: new Footer({
+                            children: [
+                                new Paragraph({
+                                    children: [
+                                        new TextRun({ text: "עמוד ", font: "Arial", size: 20 }),
+                                        new TextRun({ children: [PageNumber.CURRENT], font: "Arial", size: 20 }),
+                                        new TextRun({ text: " מתוך ", font: "Arial", size: 20 }),
+                                        new TextRun({ children: [PageNumber.TOTAL_PAGES], font: "Arial", size: 20 })
+                                    ],
+                                    alignment: AlignmentType.LEFT, bidirectional: true
+                                })
+                            ]
+                        })
+                    },
+                    children: docChildren
+                }]
+            });
 
-        const blob = await Packer.toBlob(doc);
-        saveAs(blob, `אפיון_סייבר_${projectName}.docx`);
-        closeReportModal();
-    }
-</script>
+            const blob = await Packer.toBlob(doc);
+            saveAs(blob, `אפיון_סייבר_${projectName}.docx`);
+            closeReportModal();
+        }
+    </script>
 </body>
 </html>
