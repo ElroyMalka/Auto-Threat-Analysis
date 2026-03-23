@@ -684,6 +684,7 @@
             </div>
 
             <div class="modal-body">
+
                 <div id="wizardStep1" class="wizard-step-content active">
                     <div class="risk-section">
                         <div class="risk-title">🔴 שלב 1: הערכת סיכון בסיסי (לפני הגנה)</div>
@@ -727,6 +728,9 @@
                 <div id="wizardStep3" class="wizard-step-content">
                     <div class="risk-section">
                         <div class="risk-title">🟢 שלב 3: הערכת סיכון שיורי (לאחר הגנה)</div>
+                        <p style="font-size: 14px; color: #7f8c8d; margin-bottom: 20px;">
+                            <strong>הערה מקצועית:</strong> יישום בקרות הגנה מקטין בדרך כלל את ה<b>סבירות</b> לתקיפה. רמת ה<b>השפעה (Impact)</b> נשארת לרוב זהה לסיכון המקורי.
+                        </p>
                         <div class="risk-controls">
                             <div class="risk-control-group">
                                 <label>סבירות (לאחר מימוש הדרישות)</label>
@@ -753,6 +757,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <div class="wizard-footer">
@@ -767,7 +772,7 @@
     </div>
 
     <script>
-        // הזרקת תאריך להיום אוטומטית בעת טעינת העמוד
+        // הזרקת תאריך לועזי אוטומטית בהפעלה
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('reportGregDate').value = new Date().toLocaleDateString('he-IL');
         });
@@ -815,12 +820,18 @@
         let customReqCounter = 1;
 
         for (const [category, reqs] of Object.entries(categorizedRequirements)) {
-            reqs.forEach(req => { reqDB[req.id] = { category: category, text: req.text }; allReqIds.push(req.id); });
+            reqs.forEach(req => {
+                reqDB[req.id] = { category: category, text: req.text };
+                allReqIds.push(req.id);
+            });
         }
 
         let threatCounter = 1;
         for (const [category, threats] of Object.entries(categorizedThreats)) {
-            threats.forEach(t => { threatIdMap[t.name] = `S${threatCounter}`; threatCounter++; });
+            threats.forEach(t => {
+                threatIdMap[t.name] = `S${threatCounter}`;
+                threatCounter++;
+            });
         }
 
         let projectData = {};
@@ -828,43 +839,41 @@
         let currentWizardStep = 1;
 
         function calculateSeverity(likelihood, impact) {
-            if (!likelihood || !impact) return { text: "טרם נקבע", class: "bg-none", color: "bdc3c7" };
+            if (!likelihood || !impact) return { text: "טרם נקבע", class: "bg-none", inline: "" };
             const matrix = {
-                "נמוכה": { "נמוכה": { text: "נמוכה ביותר", color: "92d050" }, "בינונית": { text: "נמוכה", color: "00b050" }, "גבוהה": { text: "בינונית", color: "ffff00" } },
-                "בינונית": { "נמוכה": { text: "נמוכה", color: "00b050" }, "בינונית": { text: "בינונית", color: "ffff00" }, "גבוהה": { text: "גבוהה", color: "ff0000" } },
-                "גבוהה": { "נמוכה": { text: "בינונית", color: "ffff00" }, "בינונית": { text: "גבוהה", color: "ff0000" }, "גבוהה": { text: "קריטית", color: "c00000" } }
+                "נמוכה": { "נמוכה": "נמוכה ביותר", "בינונית": "נמוכה", "גבוהה": "בינונית" },
+                "בינונית": { "נמוכה": "נמוכה", "בינונית": "בינונית", "גבוהה": "גבוהה" },
+                "גבוהה": { "נמוכה": "בינונית", "בינונית": "גבוהה", "גבוהה": "קריטית" }
             };
-            const res = matrix[likelihood][impact];
-
+            const result = matrix[likelihood][impact];
             let colorClass = "bg-none";
-            if (res.text === "נמוכה ביותר") colorClass = "bg-very-low";
-            else if (res.text === "נמוכה") colorClass = "bg-low";
-            else if (res.text === "בינונית") colorClass = "bg-medium";
-            else if (res.text === "גבוהה") colorClass = "bg-high";
-            else if (res.text === "קריטית") colorClass = "bg-critical";
-
-            return { text: res.text, color: res.color, class: colorClass };
+            if (result === "נמוכה ביותר") colorClass = "bg-very-low";
+            else if (result === "נמוכה") colorClass = "bg-low";
+            else if (result === "בינונית") colorClass = "bg-medium";
+            else if (result === "גבוהה") colorClass = "bg-high";
+            else if (result === "קריטית") colorClass = "bg-critical";
+            return { text: result, class: colorClass };
         }
 
         function updateWizardRisk() {
             const inL = document.getElementById('inherentLikelihood').value;
             const inI = document.getElementById('inherentImpact').value;
-            const inSev = calculateSeverity(inL, inI);
+            const inRes = calculateSeverity(inL, inI);
 
             const inBadge = document.getElementById('inherentBadge');
-            inBadge.innerText = inSev.text;
-            inBadge.className = `badge-risk ${inSev.class}`;
+            inBadge.innerText = inRes.text;
+            inBadge.className = `badge-risk ${inRes.class}`;
 
             const resImpactSelect = document.getElementById('residualImpact');
             resImpactSelect.value = inI;
 
             const resL = document.getElementById('residualLikelihood').value;
             const resI = resImpactSelect.value;
-            const resSev = calculateSeverity(resL, resI);
+            const resRes = calculateSeverity(resL, resI);
 
             const resBadge = document.getElementById('residualBadge');
-            resBadge.innerText = resSev.text;
-            resBadge.className = `badge-risk ${resSev.class}`;
+            resBadge.innerText = resRes.text;
+            resBadge.className = `badge-risk ${resRes.class}`;
         }
 
         function generateReqHTML(id, isChecked) {
@@ -1116,43 +1125,18 @@
 
 
         // =========================================================
-        // ייצוא מוסדי לוורד - טבלת כותרת עליונה עם חלקים מהירים
+        // ייצוא מוסדי לוורד - בניית טבלת כותרת מדויקת מבוססת תמונה
         // =========================================================
 
-        // יצירת תא בטבלת הכותרת העליונה המכיל "שדה חכם" (Quick Part)
-        function createHeaderFieldCell(instruction, fallbackText, align = docx.AlignmentType.CENTER, isBold = false) {
-            return new docx.TableCell({
-                children: [
-                    new docx.Paragraph({
-                        children: [
-                            new docx.SimpleField(instruction, new docx.TextRun({ text: fallbackText, bold: isBold, font: "Arial", size: 20 }))
-                        ],
-                        alignment: align,
-                        bidirectional: true
-                    })
-                ],
-                verticalAlign: docx.VerticalAlign.CENTER,
-                margins: { top: 50, bottom: 50, left: 100, right: 100 }
-            });
+        function getDocxColor(severityText) {
+            if (severityText === "נמוכה ביותר") return "92D050";
+            if (severityText === "נמוכה") return "00B050";
+            if (severityText === "בינונית") return "FFFF00";
+            if (severityText === "גבוהה") return "FF0000";
+            if (severityText === "קריטית") return "C00000";
+            return "FFFFFF";
         }
 
-        // יצירת תא רגיל בטבלת הכותרת העליונה (עבור התוויות)
-        function createHeaderCell(text, bgColor = null, isBold = false, align = docx.AlignmentType.CENTER) {
-            return new docx.TableCell({
-                children: [
-                    new docx.Paragraph({
-                        children: [new docx.TextRun({ text: text || "-", bold: isBold, font: "Arial", size: 20, color: "000000" })],
-                        alignment: align,
-                        bidirectional: true
-                    })
-                ],
-                shading: bgColor ? { fill: bgColor } : undefined,
-                verticalAlign: docx.VerticalAlign.CENTER,
-                margins: { top: 50, bottom: 50, left: 100, right: 100 }
-            });
-        }
-
-        // יצירת תאים רגילים עבור טבלאות גוף המסמך
         function createDocxCell(text, bgColor = null, isBold = false, align = docx.AlignmentType.CENTER, textColor = "000000") {
             return new docx.TableCell({
                 children: [
@@ -1168,15 +1152,6 @@
             });
         }
 
-        function getDocxColor(severityText) {
-            if (severityText === "נמוכה ביותר") return "92D050";
-            if (severityText === "נמוכה") return "00B050";
-            if (severityText === "בינונית") return "FFFF00";
-            if (severityText === "גבוהה") return "FF0000";
-            if (severityText === "קריטית") return "C00000";
-            return "FFFFFF";
-        }
-
         async function executeDocumentGeneration(docType) {
             if (docType === 'pdf') {
                 alert("הדפסת PDF עובדת דרך לחצן ההדפסה של הדפדפן שלך.");
@@ -1188,7 +1163,7 @@
             const author = document.getElementById('reportAuthor').value || "לא צוין";
             const classification = document.getElementById('reportClassification').value;
 
-            // שליפת 4 הערכים לחלקים המהירים בכותרת העליונה
+            // 4 החלקים המהירים
             const orgName = document.getElementById('reportOrg').value || "לא צוין";
             const refName = document.getElementById('reportReference').value || "ללא";
             const hebDate = document.getElementById('reportHebDate').value || "לא צוין";
@@ -1201,8 +1176,9 @@
                 return;
             }
 
-            const { Document, Packer, Paragraph, TextRun, AlignmentType, Table, TableRow, WidthType, BorderStyle, Header, Footer, PageNumber, HeadingLevel, SimpleField } = docx;
+            const { Document, Packer, Paragraph, TextRun, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle, HeightRule, VerticalAlign, Header, Footer, PageNumber, HeadingLevel, SimpleField } = docx;
 
+            // עיצוב גבולות שחורים בולטים לטבלאות גוף המסמך ולטבלת הכותרת העליונה
             const tableBorders = {
                 top: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
                 bottom: { style: BorderStyle.SINGLE, size: 2, color: "000000" },
@@ -1212,20 +1188,8 @@
                 insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "000000" }
             };
 
-            const noBorders = {
-                top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                insideHorizontal: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                insideVertical: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
-            };
-
             const docChildren = [];
 
-            // ==========================================
-            // עמוד השער
-            // ==========================================
             docChildren.push(new Paragraph({
                 children: [new TextRun({ text: "דוח אפיון סייבר", font: "Arial", size: 52, bold: true, color: "1F4E79" })],
                 alignment: AlignmentType.CENTER, bidirectional: true, spacing: { before: 1000, after: 400 }
@@ -1239,7 +1203,7 @@
             docChildren.push(new Paragraph({ text: "", pageBreakBefore: true }));
 
             // ==========================================
-            // גוף המסמך - פרק 1: הערכת סיכונים
+            // גוף המסמך
             // ==========================================
             docChildren.push(new Paragraph({
                 text: "1. ניתוח איומים והערכת סיכונים",
@@ -1273,91 +1237,12 @@
                 }));
             });
             docChildren.push(new Table({ rows: threatRows, width: { size: 100, type: WidthType.PERCENTAGE }, borders: tableBorders }));
-            docChildren.push(new Paragraph({ text: "", spacing: { after: 600 } }));
 
             // ==========================================
-            // פרק 2: דרישות אבטחת מידע
-            // ==========================================
-            docChildren.push(new Paragraph({
-                text: "2. דרישות הגנה מפורטות",
-                heading: HeadingLevel.HEADING_1,
-                alignment: AlignmentType.RIGHT,
-                bidirectional: true
-            }));
-
-            const reqRows = [
-                new TableRow({
-                    children: [
-                        createDocxCell("איום", "333F50", true, AlignmentType.CENTER, "FFFFFF"),
-                        createDocxCell("מזהה דרישה", "333F50", true, AlignmentType.CENTER, "FFFFFF"),
-                        createDocxCell("מהות הדרישה לביצוע", "333F50", true, AlignmentType.CENTER, "FFFFFF")
-                    ]
-                })
-            ];
-
-            activeThreats.forEach(threat => {
-                const tData = projectData[threat];
-                tData.reqs.forEach((id, index) => {
-                    reqRows.push(new TableRow({
-                        children: [
-                            createDocxCell(index === 0 ? threat : "", index === 0 ? "F8F9FA" : null, true, AlignmentType.RIGHT),
-                            createDocxCell(id, null, true),
-                            createDocxCell(reqDB[id] ? reqDB[id].text : "דרישה חסרה", null, false, AlignmentType.RIGHT)
-                        ]
-                    }));
-                });
-            });
-
-            docChildren.push(new Table({ rows: reqRows, width: { size: 100, type: WidthType.PERCENTAGE }, borders: tableBorders }));
-            docChildren.push(new Paragraph({ text: "", spacing: { after: 600 } }));
-
-            // ==========================================
-            // פרק 3: סיכון שיורי
-            // ==========================================
-            docChildren.push(new Paragraph({
-                text: "3. סיכון שיורי לאחר בקרות",
-                heading: HeadingLevel.HEADING_1,
-                alignment: AlignmentType.RIGHT,
-                bidirectional: true
-            }));
-
-            const resRows = [
-                new TableRow({
-                    children: [
-                        createDocxCell("איום", "D9E1F2", true),
-                        createDocxCell("סיכון מקורי", "D9E1F2", true),
-                        createDocxCell("סבירות חדשה", "D9E1F2", true),
-                        createDocxCell("סיכון שיורי", "D9E1F2", true)
-                    ]
-                })
-            ];
-
-            activeThreats.forEach(threat => {
-                const tData = projectData[threat];
-                const originalColor = getDocxColor(tData.inherent.severity);
-                const originalFontColor = (originalColor === "C00000" || originalColor === "FF0000" || originalColor === "00B050") ? "FFFFFF" : "000000";
-
-                const resColor = getDocxColor(tData.residual.severity);
-                const resFontColor = (resColor === "C00000" || resColor === "FF0000" || resColor === "00B050") ? "FFFFFF" : "000000";
-
-                resRows.push(new TableRow({
-                    children: [
-                        createDocxCell(threat, null, false, AlignmentType.RIGHT),
-                        createDocxCell(tData.inherent.severity, originalColor, true, AlignmentType.CENTER, originalFontColor),
-                        createDocxCell(tData.residual.likelihood),
-                        createDocxCell(tData.residual.severity, resColor, true, AlignmentType.CENTER, resFontColor)
-                    ]
-                }));
-            });
-
-            docChildren.push(new Table({ rows: resRows, width: { size: 100, type: WidthType.PERCENTAGE }, borders: tableBorders }));
-
-            // ==========================================
-            // הרכבת המסמך המלא
-            // הזרקת המאפיינים לבסיס המסמך והטמעתם בכותרת העליונה
+            // הרכבת המסמך המלא + כותרת עליונה חכמה
             // ==========================================
             const doc = new Document({
-                // שותלים את 4 הערכים כחלקים מהירים ב-Meta Data של המסמך
+                // הזרקת המידע למאפייני הליבה שיוצגו בחלקים המהירים
                 creator: author,
                 title: projectName,
                 company: orgName,       // ארגון
@@ -1378,39 +1263,94 @@
                             margin: { top: 1500, right: 1000, bottom: 1500, left: 1000 }
                         }
                     },
-                    // הכותרת העליונה (Header) המבוססת כולה על Quick Parts
+                    // הגדרת הכותרת העליונה המדויקת ע"פ בקשתך ותמונת המקור
                     headers: {
                         default: new Header({
                             children: [
                                 new Table({
-                                    width: { size: 100, type: WidthType.PERCENTAGE },
+                                    // יישור לימין, כניסה מימין של 10.89 ס"מ (6174 DXA), וללא גלישת טקסט
+                                    width: { size: 4500, type: WidthType.DXA },
+                                    alignment: AlignmentType.RIGHT,
+                                    indent: { size: 6174, type: WidthType.DXA },
+                                    visuallyRightToLeft: true,
                                     borders: tableBorders,
                                     rows: [
+                                        // שורה 1: ארגון
                                         new TableRow({
+                                            height: { value: 193, rule: HeightRule.ATLEAST }, // 0.34 ס"מ
                                             children: [
-                                                createHeaderCell("ארגון:", "F2F2F2", true, AlignmentType.RIGHT),
-                                                createHeaderFieldCell(`DOCPROPERTY Company`, orgName, AlignmentType.RIGHT),
-                                                createHeaderCell("תאריך עברי:", "F2F2F2", true, AlignmentType.RIGHT),
-                                                createHeaderFieldCell("CATEGORY", hebDate, AlignmentType.RIGHT)
+                                                new TableCell({
+                                                    verticalAlign: VerticalAlign.TOP,
+                                                    margins: { top: 50, bottom: 50, left: 100, right: 100 },
+                                                    children: [new Paragraph({
+                                                        children: [
+                                                            new TextRun({ text: "ארגון: ", bold: true, font: "Arial", size: 20 }),
+                                                            new SimpleField("DOCPROPERTY Company", new TextRun({ text: orgName, font: "Arial", size: 20 }))
+                                                        ],
+                                                        alignment: AlignmentType.RIGHT, bidirectional: true
+                                                    })]
+                                                })
                                             ]
                                         }),
+                                        // שורה 2: סימוכין
                                         new TableRow({
+                                            height: { value: 193, rule: HeightRule.ATLEAST },
                                             children: [
-                                                createHeaderCell("סימוכין:", "F2F2F2", true, AlignmentType.RIGHT),
-                                                createHeaderFieldCell("SUBJECT", refName, AlignmentType.RIGHT),
-                                                createHeaderCell("תאריך לועזי:", "F2F2F2", true, AlignmentType.RIGHT),
-                                                createHeaderFieldCell("KEYWORDS", greDate, AlignmentType.RIGHT)
+                                                new TableCell({
+                                                    verticalAlign: VerticalAlign.TOP,
+                                                    margins: { top: 50, bottom: 50, left: 100, right: 100 },
+                                                    children: [new Paragraph({
+                                                        children: [
+                                                            new TextRun({ text: "סימוכין: ", bold: true, font: "Arial", size: 20 }),
+                                                            new SimpleField("SUBJECT", new TextRun({ text: refName, font: "Arial", size: 20 }))
+                                                        ],
+                                                        alignment: AlignmentType.RIGHT, bidirectional: true
+                                                    })]
+                                                })
+                                            ]
+                                        }),
+                                        // שורה 3: תאריך עברי
+                                        new TableRow({
+                                            height: { value: 193, rule: HeightRule.ATLEAST },
+                                            children: [
+                                                new TableCell({
+                                                    verticalAlign: VerticalAlign.TOP,
+                                                    margins: { top: 50, bottom: 50, left: 100, right: 100 },
+                                                    children: [new Paragraph({
+                                                        children: [
+                                                            new TextRun({ text: "תאריך עברי: ", bold: true, font: "Arial", size: 20 }),
+                                                            new SimpleField("CATEGORY", new TextRun({ text: hebDate, font: "Arial", size: 20 }))
+                                                        ],
+                                                        alignment: AlignmentType.RIGHT, bidirectional: true
+                                                    })]
+                                                })
+                                            ]
+                                        }),
+                                        // שורה 4: תאריך לועזי
+                                        new TableRow({
+                                            height: { value: 193, rule: HeightRule.ATLEAST },
+                                            children: [
+                                                new TableCell({
+                                                    verticalAlign: VerticalAlign.TOP,
+                                                    margins: { top: 50, bottom: 50, left: 100, right: 100 },
+                                                    children: [new Paragraph({
+                                                        children: [
+                                                            new TextRun({ text: "תאריך לועזי: ", bold: true, font: "Arial", size: 20 }),
+                                                            new SimpleField("KEYWORDS", new TextRun({ text: greDate, font: "Arial", size: 20 }))
+                                                        ],
+                                                        alignment: AlignmentType.RIGHT, bidirectional: true
+                                                    })]
+                                                })
                                             ]
                                         })
                                     ]
                                 }),
-                                new Paragraph({ text: "", spacing: { after: 100 } }),
-                                // פס אזהרה
+                                new Paragraph({ text: "", spacing: { after: 150 } }),
+                                // אזהרת בטחון מידע מתחת לטבלה המרכזית
                                 new Paragraph({
                                     children: [new TextRun({ text: "כל המוסר תוכן מסמך זה כולו או מקצתו, לאדם שאינו מוסמך לכך, עובר עבירה חמורה.", color: "FFFFFF", bold: true, size: 20 })],
                                     alignment: AlignmentType.CENTER, bidirectional: true, shading: { type: "clear", fill: "C00000" }, spacing: { after: 100 }
                                 }),
-                                // סיווג
                                 new Paragraph({
                                     children: [new TextRun({ text: `- ${classification} -`, bold: true, font: "Arial", size: 24 })],
                                     alignment: AlignmentType.CENTER, bidirectional: true
@@ -1418,7 +1358,6 @@
                             ]
                         })
                     },
-                    // כותרת תחתונה
                     footers: {
                         default: new Footer({
                             children: [
@@ -1438,7 +1377,6 @@
                 }]
             });
 
-            // יצירת הקובץ והורדתו
             const blob = await Packer.toBlob(doc);
             saveAs(blob, `אפיון_סייבר_${projectName}.docx`);
             closeReportModal();
